@@ -1,15 +1,25 @@
-import express from "express";
-import cors from "cors";
-import records  from "./routes/record.js";
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv').config();
+const { test } = require('./controllers/authControllers');
+const {mongoose} = require('mongoose');
+const cookieParser = require('cookie-parser');
 
-const PORT = process.env.PORT || 5050;
+const port = 8000;
 const app = express();
 
-app.use(cors());
-app.use(express.json());
-app.use("/record", records);
 
-// start the Express server
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+mongoose.connect(process.env.MONGO_URL)
+.then(() => console.log('Database Connected'))
+.catch((err) => console.log('Database not connected', err))
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false}));
+app.use('/api', require('./routes/authRoutes'))
+app.use(cors());
+
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
