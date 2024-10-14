@@ -1,20 +1,18 @@
-const User = require ('../models/user');
-const { hashPassword, comparePassword} = require('../Helpers/auth');
-const jwt = require('jsonwebtoken');
+import User from '../models/user.js';
+import { hashPassword, comparePassword} from '../Helpers/auth.js';
+import jwt from 'jsonwebtoken';
+import { generateUserID } from '../Helpers/idgen.js';
 
-const test = (req, res) => {
-    res.json('test is working');
-};
-//Register user
+
 const registerUser = async (req, res) => {
     const {name, email, password} = req.body;
     try {
         console.log(name, email, password);
-        // validate the data
+
         if(!name ||!email) {
             return res.status(400).json({ message: 'Please fill all fields' });
         };
-        // check password
+
         if(!password) {
             return res.status(400).json({
                 error:'Password is too short and required'
@@ -25,8 +23,11 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Email already exists' });
         }
         const hashedPassword = await hashPassword(password)
+
+        const userID = await generateUserID();
+
         const user = await User.create({
-            name, email, 
+            name, email, userID,
             password:hashedPassword
         })
         return res.status(200).json({
@@ -38,7 +39,7 @@ const registerUser = async (req, res) => {
     }
 }
 
-//Login user
+
 const loginUser = async (req, res) => {
     try {
         const{email, password} = req.body;
@@ -54,7 +55,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid password' });
         }
         
-        jwt.sign({ email: user.email, id:user._id, password: user.password}, process.env.JWT_SECRET, {}, (err, token) => {
+        jwt.sign({ email: user.email, id:user.id, userID:user.userID, password: user.password}, process.env.JWT_SECRET, {}, (err, token) => {
             if(err) throw err;
             res.cookie('token', token).json(user)
         })
@@ -63,8 +64,7 @@ const loginUser = async (req, res) => {
     }
 }
 
-module.exports = {
-    test,
+export {
     registerUser,
     loginUser
 }
