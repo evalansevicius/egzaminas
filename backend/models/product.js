@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema({
     productID: { type: Number, required: true, unique: true },
     price: { type: Number, required: true },
     image: { type: String },
+    rating: { type: Number, default: 0 }
 }, { timestamps: true });
 
 // Check if the model already exists to avoid OverwriteModelError
