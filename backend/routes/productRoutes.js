@@ -9,8 +9,9 @@ router.get("/", getProducts);
 router.post('/products', createProduct);
 
 // Route to delete a product
-router.delete('/product/:id', deleteProduct);
+router.delete('/product/:productID', deleteProduct);
+
 // Route to edit a product
-router.put("/:id", updateProduct);
+router.put("/:productID", updateProduct);
 
 export default router;
