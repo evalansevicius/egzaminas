@@ -10,8 +10,10 @@ PRIVALOMA BUTI BACKEND FOLDERI
 
 Frontend Dependencies
 
-npm install zustand @chakra-ui/react @emotion/react @emotion/styled framer-motion axios @chakra-ui/icons react-icons react-router-dom react-dom
+npm install zustand @chakra-ui/react @emotion/react @emotion/styled framer-motion axios @chakra-ui/icons react-icons react-router-dom react-dom react-hook-form
 
+jai kazko truksta
+npm audit fix -f
 
 FRONTEND START
 
