@@ -83,15 +83,17 @@ const deleteProduct = async (req, res) => {
     const { productID } = req.params;
     const productData = req.body;
   
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).json({ success: false, message: "Invalid Product Id" });
-    }
-  
     try {
-      const updatedProduct = await Product.findOneAndUpdate({ productID }, productData, { new: true });
-      res.status(200).json({ success: true, data: updatedProduct });
+      const product = await Product.findOneAndUpdate({ productID }, productData, { new: true });
+      
+      if (!product) {
+        return res.status(404).json({ success: false, message: 'Product not found' });
+      }
+  
+      res.status(200).json({ success: true, data: product });
     } catch (error) {
-      res.status(500).json({ success: false, message: "Server Error" });
+      console.error('Error updating product:', error.message);
+      res.status(500).json({ success: false, message: 'Server Error' });
     }
   };
 
