@@ -13,37 +13,60 @@ import axios from "axios";
 				return { success: true, message: "Product created successfully" };
 			},
 	getProducts: async () => {
-		const res = await fetch('http://localhost:8000/api/products');
-		const data = await res.json();
-		set({ products: data.data });
+		try {
+			const res = await axios.get('http://localhost:8000/api/', {withCredentials:true});
+			set((state) => ({ products: res.data.data }));
+		  } catch (error) {
+			console.error("Error fetching products:", error);
+		  }
 	},
 	deleteProduct: async (productID) => {
-		const res = await fetch(`http://localhost:8000/api/products/${productID}`, {
-			method: "DELETE",
-		});
-		const data = await res.json();
-		if (!data.success) return { success: false, message: data.message };
-
-		// update the ui immediately, without needing a refresh
-		set((state) => ({ products: state.products.filter((product) => product.productID !== productID) }));
-		return { success: true, message: data.message };
-	},
+		try {
+		  const res = await axios.delete(`http://localhost:8000/api/products/${productID}`, {
+			withCredentials: true,
+		  });
+	  
+		  const data = res.data; 
+		  if (!data.success) {
+			return { success: false, message: data.message };
+		  }
+	  
+		  set((state) => ({
+			products: state.products.filter((product) => product.productID !== productID),
+		  }));
+	  
+		  return { success: true, message: data.message };
+		} catch (error) {
+		  console.error("Error deleting product:", error.message);
+		  return { success: false, message: "Failed to delete product" };
+		}
+	  },
+	  
 	updateProduct: async (productID, updatedProduct) => {
-		const res = await fetch(`http://localhost:8000/api/products/${productID}`, {
-			method: "PUT",
+		try {
+		  const res = await axios.put(`http://localhost:8000/api/products/${productID}`, updatedProduct, {
+			withCredentials: true,
 			headers: {
-				"Content-Type": "application/json",
+			  "Content-Type": "application/json",
 			},
-			body: JSON.stringify(updatedProduct),
-		});
-		const data = await res.json();
-		if (!data.success) return { success: false, message: data.message };
-
-		// update the ui immediately, without needing a refresh
-		set((state) => ({
-			products: state.products.map((product) => (product._id === pid ? data.data : product)),
-		}));
-
-		return { success: true, message: data.message };
-	},
+		  });
+	  
+		  const data = res.data;  
+		  if (!data.success) {
+			return { success: false, message: data.message };
+		  }
+	  
+		  set((state) => ({
+			products: state.products.map((product) =>
+			  product.productID === productID ? data.data : product
+			),
+		  }));
+	  
+		  return { success: true, message: data.message };
+		} catch (error) {
+		  console.error("Error updating product:", error.message);
+		  return { success: false, message: "Failed to update product" };
+		}
+	  },
+	  
 }));
