@@ -7,6 +7,7 @@ const CreatePage = () => {
 		name: "",
 		price: "",
 		image: "",
+		description: ""
 	});
 	const toast = useToast();
 
@@ -59,6 +60,12 @@ const CreatePage = () => {
 							name='image'
 							value={newProduct.image}
 							onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+						/>
+						<Input
+							placeholder='Description'
+							name='description'
+							value={newProduct.description}
+							onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
 						/>
 
 						<Button colorScheme='blue' onClick={handleAddProduct} w='full'>

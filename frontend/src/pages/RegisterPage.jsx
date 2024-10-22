@@ -76,7 +76,9 @@ const RegisterPage = () => {
           </FormControl>
 
           <Button type="submit" colorScheme="blue" width="full">Register</Button>
-          
+          <Text as='span' color='blue.500' _hover={{ textDecoration: "underline" }}>
+              Already have an account? <a href="/login">Login</a>
+							</Text>
         </VStack>
       </form>
     </Box>

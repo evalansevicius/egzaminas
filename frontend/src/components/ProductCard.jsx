@@ -95,6 +95,9 @@ const ProductCard = ({ product }) => {
 				<Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>
 					${product.price}
 				</Text>
+				<Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>
+					{product.description}
+				</Text>
 
 				<HStack spacing={2}>
 					<IconButton icon={<EditIcon />} onClick={onOpen} colorScheme='blue' />
@@ -133,6 +136,12 @@ const ProductCard = ({ product }) => {
 								value={updatedProduct.image}
 								onChange={(e) => setUpdatedProduct({ ...updatedProduct, image: e.target.value })}
 							/>
+							<Input
+							placeholder='Description'
+							name='description'
+							value={updatedProduct.description}
+							onChange={(e) => setUpdatedProduct({ ...updatedProduct, description: e.target.value })}
+						/>
 						</VStack>
 					</ModalBody>
 
