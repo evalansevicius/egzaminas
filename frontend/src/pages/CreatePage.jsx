@@ -3,18 +3,21 @@ import { useState } from "react";
 import { useProductStore } from "../store/product";
 
 const CreatePage = () => {
+	
 	const [newProduct, setNewProduct] = useState({
 		name: "",
 		price: "",
 		image: "",
-		description: ""
+		description: "",
 	});
 	const toast = useToast();
 
 	const { createProduct } = useProductStore();
 
 	const handleAddProduct = async () => {
+		console.log(newProduct);
 		const { success, message } = await createProduct(newProduct);
+		
 		if (!success) {
 			toast({
 				title: "Error",
@@ -30,7 +33,7 @@ const CreatePage = () => {
 				isClosable: true,
 			});
 		}
-		setNewProduct({ name: "", price: "", image: "" });
+		setNewProduct({ name: "", price: "", image: "", description: "",});
 	};
 
 	return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -8,6 +8,12 @@ import {
   Stack,
   Button,
   useColorMode,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import {
@@ -23,9 +29,12 @@ import { IoBagAddOutline } from "react-icons/io5";
 const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
   const navigate = useNavigate();
+  const cancelRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode(); 
-
+  const confirmLogout = () => {
+    onOpen()
+  };
 
   useEffect(() => {
     if (token) {
@@ -96,7 +105,7 @@ const Navbar = () => {
             {name && (
             <span>{name ? `Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}` : ''}</span>
           )}
-            <Button colorScheme="teal" size="sm" mr={4} onClick={handleLogout}>
+            <Button colorScheme="teal" size="sm" mr={4} ml={4} onClick={confirmLogout}>
               Logout
             </Button>
             </>
@@ -113,18 +122,19 @@ const Navbar = () => {
           {/* Plus Button */}
           { role === 'admin' && (
              <Link to="/create">
-            <Button>
+            <Button mr={4} size="md">
               <PlusSquareIcon fontSize={20} />
             </Button>
           </Link>
           )}
           <Link to="/cart">
-          <Button>
+          <Button size="md">
             <IoBagAddOutline fontSize={20} />
           </Button>
           </Link>
           {/* Color Mode Toggle */}
           <IconButton
+          fontSize={20}
             ml={4}
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             aria-label="Toggle Color Mode"
@@ -144,6 +154,41 @@ const Navbar = () => {
           </Stack>
         </Box>
       ) : null}
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef} // Focus on cancel button by default
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Confirm Logout
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to log out?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  handleLogout(); // Call the logout function if confirmed
+                  onClose(); // Close the dialog after logout
+                }}
+                ml={3}
+              >
+                Logout
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
