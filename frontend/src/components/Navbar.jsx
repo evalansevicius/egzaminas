@@ -19,19 +19,14 @@ import {
 } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
-
 const Navbar = () => {
-  const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout } = useContext(AuthContext);  
+  const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode(); 
 
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('role');
-    const storedName = localStorage.getItem('name');
-  
     if (token) {
       setIsLoggedIn(true);
   
@@ -83,6 +78,11 @@ const Navbar = () => {
             <Link to="/contact">
               <Button variant="ghost">Contact</Button>
             </Link>
+            { role === 'admin' && (
+            <Link to="/admin">
+              <Button variant="ghost">Admin Dashboard</Button>
+            </Link>
+)}
           </HStack>
         </HStack>
 
@@ -92,8 +92,9 @@ const Navbar = () => {
           <Flex alignItems="center">
           {isLoggedIn ? (
             <>
+            {name && (
             <span>{name ? `Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}` : ''}</span>
-             
+          )}
             <Button colorScheme="teal" size="sm" mr={4} onClick={handleLogout}>
               Logout
             </Button>
@@ -109,12 +110,13 @@ const Navbar = () => {
           )}
 
           {/* Plus Button */}
-          <Link to="/create">
+          { role === 'admin' && (
+             <Link to="/create">
             <Button>
               <PlusSquareIcon fontSize={20} />
             </Button>
           </Link>
-
+          )}
           {/* Color Mode Toggle */}
           <IconButton
             ml={4}

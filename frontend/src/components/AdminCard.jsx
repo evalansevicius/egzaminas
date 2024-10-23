@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
 	Box,
@@ -22,8 +23,9 @@ import {
 } from "@chakra-ui/react";
 import { useProductStore } from "../store/product";
 import { useState } from "react";
-
-const ProductCard = ({ product }) => {
+import {AuthContext} from "../contexts/authContext";
+const AdminCard = ({ product }) => {
+	const { role } = useContext(AuthContext);  
 	const [updatedProduct, setUpdatedProduct] = useState(product);
 
 	const textColor = useColorModeValue("gray.600", "gray.200");
@@ -98,6 +100,16 @@ const ProductCard = ({ product }) => {
 				<Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>
 					{product.description}
 				</Text>
+				{ role === 'admin' && (
+				<HStack spacing={2}>
+					<IconButton icon={<EditIcon />} onClick={onOpen} colorScheme='blue' />
+					<IconButton
+						icon={<DeleteIcon />}
+						onClick={() => handleDeleteProduct(product.productID)}
+						colorScheme='red'
+					/>
+				</HStack>
+				)}
 			</Box>
 
 			<Modal isOpen={isOpen} onClose={onClose}>
@@ -154,4 +166,4 @@ const ProductCard = ({ product }) => {
 		</Box>
 	);
 };
-export default ProductCard;
+export default AdminCard;

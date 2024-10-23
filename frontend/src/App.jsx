@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import AdminPage from "./pages/AdminPage.jsx";
 function App() {
 	return (
 		<AuthProvider>
@@ -17,6 +18,7 @@ function App() {
 				<Route path='/login' element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path='/create' element={<CreatePage />} />
+				<Route path='/admin' element={<AdminPage />} />
 			</Routes>
 		</Box>
 		</AuthProvider>
