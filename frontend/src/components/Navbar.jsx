@@ -1,3 +1,4 @@
+import React, { useEffect, useContext } from 'react';
 import {
   Box,
   Flex,
@@ -16,10 +17,33 @@ import {
   MoonIcon,
   PlusSquareIcon,
 } from "@chakra-ui/icons";
-
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/authContext';
 const Navbar = () => {
+  const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode(); //light/dark mode
+  const { colorMode, toggleColorMode } = useColorMode(); 
+
+
+  useEffect(() => {
+    if (token) {
+      setIsLoggedIn(true);
+  
+      if (storedRole === 'user') {
+        setRole(null); 
+        setName(storedName);
+      } else {
+        setRole(storedRole);
+        setName(null);
+      }
+    } else {
+      setIsLoggedIn(false);
+      setRole(null);
+      setName(null);
+    }
+  }, []);
+
 
   return (
     <Box bg={colorMode === "light" ? "gray.100" : "gray.800"} px={4}>
@@ -42,59 +66,57 @@ const Navbar = () => {
             Coffee Shop
           </Box>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-            <Link
-              px={2}
-              py={1}
-              rounded="md"
-              _hover={{ textDecoration: "none", bg: "gray.700" }}
-              href="#"
-            >
-              Home
+            <Link to="/">
+              <Button variant="ghost">Home</Button>
             </Link>
-            <Link
-              px={2}
-              py={1}
-              rounded="md"
-              _hover={{ textDecoration: "none", bg: "gray.700" }}
-              href="#"
-            >
-              Products
+            <Link to="/products">
+              <Button variant="ghost">Products</Button>
             </Link>
-            <Link
-              px={2}
-              py={1}
-              rounded="md"
-              _hover={{ textDecoration: "none", bg: "gray.700" }}
-              href="#"
-            >
-              About
+            <Link to="/about">
+              <Button variant="ghost">About</Button>
             </Link>
-            <Link
-              px={2}
-              py={1}
-              rounded="md"
-              _hover={{ textDecoration: "none", bg: "gray.700" }}
-              href="#"
-            >
-              Contact
+            <Link to="/contact">
+              <Button variant="ghost">Contact</Button>
             </Link>
+            { role === 'admin' && (
+            <Link to="/admin">
+              <Button variant="ghost">Admin Dashboard</Button>
+            </Link>
+)}
           </HStack>
         </HStack>
 
-        <Flex alignItems="center">
-          {/* Sign In Button */}
-          <Link to={"/register"}>
+          
+
+          {/* Sign In or Logout Button */}
+          <Flex alignItems="center">
+          {isLoggedIn ? (
+            <>
+            {name && (
+            <span>{name ? `Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}` : ''}</span>
+          )}
+            <Button colorScheme="teal" size="sm" mr={4} onClick={handleLogout}>
+              Logout
+            </Button>
+            </>
+          ) : (
+            <>
+          <Link to="/login">
             <Button colorScheme="teal" size="sm" mr={4}>
               Sign In
             </Button>
           </Link>
+          </>
+          )}
 
           {/* Plus Button */}
-          <Link to={"/create"}>
+          { role === 'admin' && (
+             <Link to="/create">
             <Button>
               <PlusSquareIcon fontSize={20} />
             </Button>
           </Link>
+          )}
           {/* Color Mode Toggle */}
           <IconButton
             ml={4}
@@ -109,10 +131,10 @@ const Navbar = () => {
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
-            <Link href="#">Home</Link>
-            <Link href="#">Products</Link>
-            <Link href="#">About</Link>
-            <Link href="#">Contact</Link>
+            <Link to="/">Home</Link>
+            <Link to="/products">Products</Link>
+            <Link to="/about">About</Link>
+            <Link to="/contact">Contact</Link>
           </Stack>
         </Box>
       ) : null}

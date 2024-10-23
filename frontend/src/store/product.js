@@ -1,17 +1,32 @@
 import { create } from "zustand";
 import axios from "axios";
+
+export const useProductStore = create((set) => ({
 	
-		export const useProductStore = create((set) => ({
-			products: [],
-			setProducts: (products) => set({ products }),
-			createProduct: async (newProduct) => {
-				if (!newProduct.name || !newProduct.image || !newProduct.price) {
-					return { success: false, message: "Please fill in all fields." };
-				}
-				const res = await axios.post('http://localhost:8000/api/products', newProduct,{withCredentials:true});
-				set((state) => ({ products: [...state.products, res.data] }));
-				return { success: true, message: "Product created successfully" };
-			},
+	products: [],
+	setProducts: (products) => set({ products }),
+	
+	createProduct: async (newProduct) => {
+	  if (!newProduct.name || !newProduct.image || !newProduct.price) {
+		return { success: false, message: "Please fill in all fields." };
+	  }
+  
+	  try {
+		const token = localStorage.getItem('token')
+		const res = await axios.post('http://localhost:8000/api/products', newProduct, {
+		  headers: {
+			Authorization: `Bearer ${token}`,  // Send the JWT token in the Authorization header
+		  },
+		  withCredentials: true,
+		});
+  
+		set((state) => ({ products: [...state.products, res.data] }));
+		return { success: true, message: "Product created successfully" };
+	  } catch (error) {
+		return { success: false, message: error.response?.data?.message || "Error creating product" };
+	  }
+	},
+
 	getProducts: async () => {
 		try {
 			const res = await axios.get('http://localhost:8000/api/', {withCredentials:true});
@@ -22,8 +37,13 @@ import axios from "axios";
 	},
 	deleteProduct: async (productID) => {
 		try {
+			const token = localStorage.getItem('token')
 		  const res = await axios.delete(`http://localhost:8000/api/products/${productID}`, {
-			withCredentials: true,
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			  },
+			  withCredentials: true,
 		  });
 	  
 		  const data = res.data; 
@@ -44,11 +64,13 @@ import axios from "axios";
 	  
 	updateProduct: async (productID, updatedProduct) => {
 		try {
+		const token = localStorage.getItem('token')
 		  const res = await axios.put(`http://localhost:8000/api/products/${productID}`, updatedProduct, {
-			withCredentials: true,
 			headers: {
-			  "Content-Type": "application/json",
-			},
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			  },
+			  withCredentials: true,
 		  });
 	  
 		  const data = res.data;  

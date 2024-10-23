@@ -5,37 +5,44 @@ const addToCart = async (req, res) => {
   const { userID, productID, quantity } = req.body;
 
   try {
-    
+    // Find the product in the database
     const product = await Product.findOne({ productID });
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    
+    // Find the user's cart
     let cart = await Cart.findOne({ userID });
 
     if (cart) {
-      
+      // If cart exists, check if the product is already in the cart
       const productIndex = cart.products.findIndex(p => p.productID === productID);
+
       if (productIndex > -1) {
-        
+        // If product exists, update the quantity
         cart.products[productIndex].quantity += quantity;
       } else {
-        
+        // If product doesn't exist, add it to the cart
         cart.products.push({ productID, quantity });
       }
-      
-      cart.totalPrice += product.price * quantity;
+
     } else {
-      
+      // If no cart exists for the user, create a new cart
       cart = new Cart({
         userID,
         products: [{ productID, quantity }],
-        totalPrice: product.price * quantity,
       });
     }
 
-    
+    // Calculate the total price
+    let totalPrice = 0;
+    for (let item of cart.products) {
+      const prod = await Product.findOne({ productID: item.productID });
+      totalPrice += prod.price * item.quantity;
+    }
+    cart.totalPrice = totalPrice;
+
+    // Save the cart
     await cart.save();
     res.status(201).json(cart);
 
@@ -44,6 +51,8 @@ const addToCart = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
 
 const getCart = async (req, res) => {
     const { userID } = req.params;
@@ -61,28 +70,42 @@ const getCart = async (req, res) => {
     }
   };
 
- const removeFromCart = async (req, res) => {
+  const removeFromCart = async (req, res) => {
     const { userID, productID } = req.body;
   
     try {
-      const cart = await Cart.findOne({ user: userID });
+      // Find the cart of the user
+      const cart = await Cart.findOne({ userID });
       if (!cart) {
         return res.status(404).json({ message: 'Cart not found' });
       }
   
-      const productIndex = cart.products.findIndex(p => p.product.toString() === productID);
+      // Find the product in the cart
+      const productIndex = cart.products.findIndex(p => p.productID === productID);
       if (productIndex === -1) {
         return res.status(404).json({ message: 'Product not found in cart' });
       }
   
-      cart.totalPrice -= cart.products[productIndex].quantity * cart.products[productIndex].product.price;
+      // Remove the product from the cart
       cart.products.splice(productIndex, 1);
-      await cart.save();
   
+      // Recalculate the total price after removing the product
+      let totalPrice = 0;
+      for (let item of cart.products) {
+        const prod = await Product.findOne({ productID: item.productID });
+        totalPrice += prod.price * item.quantity;
+      }
+      cart.totalPrice = totalPrice;
+  
+      // Save the updated cart
+      await cart.save();
       res.status(200).json(cart);
+  
     } catch (error) {
       console.error('Error removing from cart:', error.message);
       res.status(500).json({ message: 'Server error' });
     }
   };
+  
+  
   export { addToCart, getCart, removeFromCart };
