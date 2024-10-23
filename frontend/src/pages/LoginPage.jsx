@@ -1,27 +1,28 @@
-import React, {useContext } from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Input, Heading, Text, VStack, useToast } from '@chakra-ui/react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext.jsx';
 
 const LoginPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const toast = useToast();
   const navigate = useNavigate();
-  const { setIsLoggedIn, setRole } = useContext(AuthContext);
-  
+  const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout } = useContext(AuthContext);
+
   const onSubmit = async (data) => {
     try {
       const res = await axios.post('http://localhost:8000/api/login', data);
-      
+
       if (res.status === 200) {
-        const {token, user} = res.data;
+        const { token, user } = res.data;
         localStorage.setItem('token', token);
         localStorage.setItem('role', user.role);
-
+        localStorage.setItem('name', user.name);
         setIsLoggedIn(true);
-        setRole(user.role); 
+        setRole(user.role);
+        setName(user.name);
 
         toast({
           title: "Login Successful!",
@@ -42,7 +43,7 @@ const LoginPage = () => {
         });
       }
     } catch (error) {
-        toast({
+      toast({
         title: "Login failed.",
         description: error.response?.data?.message || "Network error or server error. Please try again.",
         status: "error",
@@ -57,31 +58,47 @@ const LoginPage = () => {
       <Heading as="h2" mb={6} textAlign="center">Login</Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack spacing={4}>
-
+          {/* Email Field */}
           <FormControl id="email" isInvalid={errors.email}>
             <FormLabel>Email</FormLabel>
-            <Input 
-              type="email" 
-              placeholder="Your Email" 
-              {...register('email', { required: 'Email is required' })} 
+            <Input
+              type="email"
+              placeholder="Your Email"
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: 'Enter a valid email address',
+                }
+              })}
             />
             {errors.email && <Text color="red.500">{errors.email.message}</Text>}
           </FormControl>
 
+          {/* Password Field */}
           <FormControl id="password" isInvalid={errors.password}>
             <FormLabel>Password</FormLabel>
-            <Input 
-              type="password" 
-              placeholder="Password" 
-              {...register('password', { required: 'Password is required' })}
+            <Input
+              type="password"
+              placeholder="Password"
+              {...register('password', {
+                required: 'Password is required',
+                minLength: {
+                  value: 6,
+                  message: 'Password must be at least 6 characters long',
+                }
+              })}
             />
             {errors.password && <Text color="red.500">{errors.password.message}</Text>}
           </FormControl>
 
-          <Button type="submit" colorScheme="blue" width="full">login</Button>
+          {/* Submit Button */}
+          <Button type="submit" colorScheme="blue" width="full">Login</Button>
+
+          {/* Link to Register */}
           <Text as='span' color='blue.500' _hover={{ textDecoration: "underline" }}>
-               <a href="/register">Don't have an account? Register</a>
-							</Text>
+            <Link to="/register">Don't have an account? Register</Link>
+          </Text>
         </VStack>
       </form>
     </Box>

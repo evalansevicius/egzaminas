@@ -21,32 +21,34 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
 
 const Navbar = () => {
-  const { isLoggedIn, setIsLoggedIn, role, setRole } = useContext(AuthContext);  
+  const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout } = useContext(AuthContext);  
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode(); 
 
 
   useEffect(() => {
-    
     const token = localStorage.getItem('token');
     const storedRole = localStorage.getItem('role');
-
+    const storedName = localStorage.getItem('name');
+  
     if (token) {
       setIsLoggedIn(true);
-      setRole(storedRole || 'user');
+  
+      if (storedRole === 'user') {
+        setRole(null); 
+        setName(storedName);
+      } else {
+        setRole(storedRole);
+        setName(null);
+      }
     } else {
       setIsLoggedIn(false);
+      setRole(null);
+      setName(null);
     }
-  }, [setIsLoggedIn, setRole]); 
+  }, []);
 
-  // Logout handler
-  const handleLogout = () => {
-    localStorage.removeItem('token');  
-    setIsLoggedIn(false); 
-    setRole('user'); 
-    navigate('/login'); 
-  };
 
   return (
     <Box bg={colorMode === "light" ? "gray.100" : "gray.800"} px={4}>
@@ -84,25 +86,26 @@ const Navbar = () => {
           </HStack>
         </HStack>
 
-          {/* Display User Role */}
-          <Flex alignItems="center">
-          {isLoggedIn && (
-            <Box color={colorMode === "light" ? "black" : "white"} mr={4}>
-              Role: {role}
-            </Box>
-          )}
+          
 
           {/* Sign In or Logout Button */}
+          <Flex alignItems="center">
           {isLoggedIn ? (
+            <>
+            <span>{name ? `Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}` : ''}</span>
+             
             <Button colorScheme="teal" size="sm" mr={4} onClick={handleLogout}>
               Logout
             </Button>
+            </>
           ) : (
-            <Link to="/login">
-              <Button colorScheme="teal" size="sm" mr={4} onClick={() => setIsLoggedIn(true)}>
-                Sign In
-              </Button>
-            </Link>
+            <>
+          <Link to="/login">
+            <Button colorScheme="teal" size="sm" mr={4}>
+              Sign In
+            </Button>
+          </Link>
+          </>
           )}
 
           {/* Plus Button */}
