@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
+import { IoBagAddOutline } from "react-icons/io5";
 const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
   const navigate = useNavigate();
@@ -117,6 +118,11 @@ const Navbar = () => {
             </Button>
           </Link>
           )}
+          <Link to="/cart">
+          <Button>
+            <IoBagAddOutline fontSize={20} />
+          </Button>
+          </Link>
           {/* Color Mode Toggle */}
           <IconButton
             ml={4}

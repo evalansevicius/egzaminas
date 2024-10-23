@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { useProductStore } from "../store/product";
 import { useState } from "react";
-
+import { IoBagAddOutline } from "react-icons/io5";
 const ProductCard = ({ product }) => {
 	const [updatedProduct, setUpdatedProduct] = useState(product);
 
@@ -100,6 +100,14 @@ const ProductCard = ({ product }) => {
 				</Text>
 			</Box>
 
+		  {/* button for addtocart */}
+		  <HStack spacing={2}>
+          <Button>
+            <IoBagAddOutline fontSize={20} />
+          </Button>
+			</HStack>
+
+			
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 
