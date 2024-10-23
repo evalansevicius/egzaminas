@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import {mongoose} from 'mongoose';
 import cookieParser from 'cookie-parser';
 
+import adminRoutes from './routes/adminRoutes.js';
 import cartRoutes from './routes/cartRoutes.js'
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
@@ -29,6 +30,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false}));
 app.use('/api', authRoutes);
+app.use('/api', adminRoutes);
+
 app.use('/api', productRoutes);
 app.use('/api', cartRoutes);
 
