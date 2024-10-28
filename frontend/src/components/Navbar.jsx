@@ -14,7 +14,7 @@ import {
   CloseIcon,
   SunIcon,
   MoonIcon,
-  PlusSquareIcon,
+  
 } from "@chakra-ui/icons";
 
 const Navbar = () => {
@@ -88,13 +88,14 @@ const Navbar = () => {
               Sign In
             </Button>
           </Link>
-
-          {/* Plus Button */}
-          <Link to={"/create"}>
-            <Button>
-              <PlusSquareIcon fontSize={20} />
+          <Link to={"/cart"}>
+            <Button colorScheme="teal" size="sm" mr={4}>
+              Cart
             </Button>
           </Link>
+          
+
+       
           {/* Color Mode Toggle */}
           <IconButton
             ml={4}
