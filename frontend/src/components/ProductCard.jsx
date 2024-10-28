@@ -1,4 +1,3 @@
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
@@ -24,7 +23,10 @@ import { useProductStore } from "../store/product"; // Assuming this is still in
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 
+} from "@chakra-ui/react";
+import { IoBagAddOutline } from "react-icons/io5";
 const ProductCard = ({ product }) => {
+
     const [updatedProduct, setUpdatedProduct] = useState(product);
     const textColor = useColorModeValue("gray.600", "gray.200");
     const bg = useColorModeValue("white", "gray.800");
