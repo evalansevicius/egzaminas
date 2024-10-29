@@ -21,6 +21,7 @@ import {
   CloseIcon,
   SunIcon,
   MoonIcon,
+  PlusSquareIcon
   
 } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
