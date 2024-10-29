@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from './contexts/authContext.jsx';
@@ -7,6 +9,9 @@ import Navbar from "./components/Navbar";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage.jsx";
+import Cart from './pages/Cart';
+import CheckoutPage from './pages/CheckoutPage'; 
+
 function App() {
 	return (
 		<AuthProvider>
@@ -19,6 +24,8 @@ function App() {
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path='/create' element={<CreatePage />} />
 				<Route path='/admin' element={<AdminPage />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path='/checkout' element={<CheckoutPage />} />
 			</Routes>
 		</Box>
 		</AuthProvider>

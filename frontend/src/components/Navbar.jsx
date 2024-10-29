@@ -21,7 +21,7 @@ import {
   CloseIcon,
   SunIcon,
   MoonIcon,
-  PlusSquareIcon,
+  
 } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
@@ -132,6 +132,7 @@ const Navbar = () => {
             <IoBagAddOutline fontSize={20} />
           </Button>
           </Link>
+
           {/* Color Mode Toggle */}
           <IconButton
           fontSize={20}
