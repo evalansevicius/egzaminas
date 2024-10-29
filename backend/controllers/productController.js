@@ -15,7 +15,8 @@ const createProduct = async (req, res) => {
         name,
         price,
         productID,
-        image: req.body.image || ''
+        image: req.body.image || '',
+        description: req.body.description || '',
       });
 
       res.status(201).json({
