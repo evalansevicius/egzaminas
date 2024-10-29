@@ -102,18 +102,18 @@ const deleteProduct = async (req, res) => {
     const { productID } = req.params;
     
     try {
-      const product = await Product.FindOne ({ productID });
+      const product = await Product.findOne ({ productID });
       if (!product) {
         return res.status(404).json ({ message: "No Product found"});
       }
-      product.rating +=1;
+      product.rating = product.rating ? product.rating + 1 : 1;
 
       await product.save();
 
       res.status(200).json ({ success: true, message: "rating updated! ", rating: product.rating});
      
     } catch (error){
-      console.log("Error incrementingRating ", error.message);
+      console.log("Error incrementing Rating: ", error.message);
       res.status(500).json ({ message: "Server Error" });
     }
   };

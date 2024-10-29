@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import { CartProvider } from './context/CartContext'; // Adjust the path as necessary
+import { CartProvider } from './contexts/CartContext'; // Adjust the path as necessary
 
 ReactDOM.render(
     <ChakraProvider>

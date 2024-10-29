@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProduct, deleteProduct, getProducts, updateProduct } from '../controllers/productController.js';
+import { createProduct, deleteProduct, getProducts, updateProduct, incrementRating } from '../controllers/productController.js';
 import { isAdmin } from '../helpers/auth.js';
 const router = express.Router();
 
@@ -15,4 +15,6 @@ router.delete('/products/:productID',isAdmin, deleteProduct);
 // Route to edit a product
 router.put("/products/:productID",isAdmin, updateProduct);
 
+// Route to increment rating
+router.patch("/products/:productID/incrementRating", incrementRating);
 export default router;

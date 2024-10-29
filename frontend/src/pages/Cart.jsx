@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Heading, Text, Image, VStack } from '@chakra-ui/react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Cart = () => {

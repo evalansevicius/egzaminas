@@ -5,34 +5,65 @@ import {
     HStack,
     IconButton,
     Image,
-    Input,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
     Text,
     useColorModeValue,
-    useDisclosure,
     useToast,
-    VStack,
 } from "@chakra-ui/react";
-import { useProductStore } from "../store/product"; // Assuming this is still in use
+import { useCart } from "../contexts/CartContext";
+import { IoBagAddOutline, IoStar } from "react-icons/io5";
 import { useState } from "react";
-import { useCart } from "../context/CartContext";
-
+import { useProductStore } from "../store/product.js";
 const ProductCard = ({ product }) => {
 
-    const [updatedProduct, setUpdatedProduct] = useState(product);
     const textColor = useColorModeValue("gray.600", "gray.200");
     const bg = useColorModeValue("white", "gray.800");
-    const { deleteProduct, updateProduct } = useProductStore();
     const { addToCart } = useCart(); // Use the Cart context
+	const incrementRating = useProductStore((state) => state.incrementRating);
     const toast = useToast();
-    const { isOpen, onOpen, onClose } = useDisclosure();
-
+	const [rating, setRating] = useState(product.rating || 0);
+	const handleIncrementRating = async () => {
+		const ratedProducts = JSON.parse(localStorage.getItem('ratedProducts')) || [];
+	
+	
+		if (ratedProducts.includes(product.productID)) {
+			toast({
+				title: "Already Rated",
+				description: "You can only rate this product once.",
+				status: "info",
+				duration: 3000,
+				isClosable: true,
+			});
+			return;
+		}
+	
+		try {
+			const { success, rating: newRating } = await incrementRating(product.productID);
+			if (success) {
+				setRating(newRating);
+	
+				// Store the rated product ID in local storage
+				ratedProducts.push(product.productID);
+				localStorage.setItem('ratedProducts', JSON.stringify(ratedProducts));
+	
+				toast({
+					title: "Rating Updated",
+					description: `Rating for ${product.name} has been increased.`,
+					status: "success",
+					duration: 3000,
+					isClosable: true,
+				});
+			}
+		} catch (error) {
+			toast({
+				title: "Error",
+				description: "Could not update the rating.",
+				status: "error",
+				duration: 3000,
+				isClosable: true,
+			});
+		}
+	};
+	
     const handleAddToCart = () => {
         addToCart(product); // Call the context function to add the product to the cart
         toast({
@@ -59,7 +90,14 @@ const ProductCard = ({ product }) => {
                 <Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>€{product.price}</Text>
                 <Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>{product.description}</Text>
                 <HStack spacing={2}>
-                    <Button colorScheme='teal' onClick={handleAddToCart}>Add to Cart</Button>
+                    <IconButton colorScheme='teal' icon={<IoBagAddOutline />} onClick={handleAddToCart}></IconButton>
+					<Button
+                        onClick={handleIncrementRating}
+                        colorScheme="yellow"
+                        leftIcon={<IoStar />}
+                    >
+                        {rating}
+                    </Button>
                 </HStack>
             </Box>
 

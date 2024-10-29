@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../contexts/CartContext';
 import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react';
 
 const CheckoutPage = () => {
