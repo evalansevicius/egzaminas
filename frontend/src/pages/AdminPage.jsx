@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, SimpleGrid, Text, VStack, Button, Input, HStack, useToast } from "@chakra-ui/react";
+import { Container, SimpleGrid, Text, VStack, Button, Input, HStack, useToast, Box } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/product"; // Add your user management store here if needed
@@ -14,6 +14,8 @@ const AdminPage = () => {
   useEffect(() => {
     getProducts();
   }, [getProducts]);
+
+
 
   // Function to handle promoting a user to admin
   const promoteToAdmin = async () => {
@@ -162,6 +164,7 @@ const AdminPage = () => {
             </Link>
           </Text>
         )}
+
 
       </VStack>
     </Container>
