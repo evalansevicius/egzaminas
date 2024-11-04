@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCart } from '../contexts/CartContext';
-import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Heading, Text, VStack, Image } from '@chakra-ui/react';
 
 const CheckoutPage = () => {
     const { cart } = useCart();
@@ -22,6 +22,14 @@ const CheckoutPage = () => {
                 ) : (
                     cart.map((product) => (
                         <Box key={product.id} borderWidth={1} borderRadius='lg' p={4}>
+                            <Image 
+                                src={product.image} 
+                                alt={product.name} 
+                                boxSize='100px' 
+                                objectFit='cover' 
+                                borderRadius='md' 
+                                mb={2} 
+                            />
                             <Text fontWeight='bold'>{product.name}</Text>
                             <Text>Price: ${product.price.toFixed(2)}</Text>
                             <Text>Quantity: {product.quantity}</Text>

@@ -11,7 +11,8 @@ import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage.jsx";
 import Cart from './pages/Cart';
 import CheckoutPage from './pages/CheckoutPage'; 
-
+import ContactPage from './pages/ContactPage';
+import AboutPage from './pages/AboutPage';
 function App() {
 	return (
 		<AuthProvider>
@@ -26,6 +27,8 @@ function App() {
 				<Route path='/admin' element={<AdminPage />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<CheckoutPage />} />
+		<Route path='/contact' element={<ContactPage />} />
+		<Route path='/about' element={<AboutPage />} />
 			</Routes>
 		</Box>
 		</AuthProvider>

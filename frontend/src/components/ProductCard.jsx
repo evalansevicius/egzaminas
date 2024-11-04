@@ -83,12 +83,13 @@ const ProductCard = ({ product }) => {
             transition='all 0.3s'
             _hover={{ transform: "translateY(-5px)", shadow: "xl" }}
             bg={bg}
+			p={4}
         >
             <Image src={product.image} alt={product.name} h={48} w='full' objectFit='cover' />
             <Box p={4}>
                 <Heading as='h3' size='md' mb={2}>{product.name}</Heading>
                 <Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>€{product.price}</Text>
-                <Text fontWeight='bold' fontSize='xl' color={textColor} mb={4}>{product.description}</Text>
+                <Text fontSize='sm' color={textColor} mb={4}>{product.description}</Text>
                 <HStack spacing={2}>
                     <IconButton colorScheme='teal' icon={<IoBagAddOutline />} onClick={handleAddToCart}></IconButton>
 					<Button

@@ -15,32 +15,28 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   HamburgerIcon,
   CloseIcon,
   SunIcon,
   MoonIcon,
   PlusSquareIcon
-  
 } from "@chakra-ui/icons";
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
 import { IoBagAddOutline } from "react-icons/io5";
+
 const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
   const navigate = useNavigate();
   const cancelRef = useRef();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const menuDisclosure = useDisclosure(); // For mobile menu
+  const logoutDialogDisclosure = useDisclosure(); // For logout dialog
   const { colorMode, toggleColorMode } = useColorMode(); 
-  const confirmLogout = () => {
-    onOpen()
-  };
 
   useEffect(() => {
     if (token) {
       setIsLoggedIn(true);
-  
       if (storedRole === 'user') {
         setRole(null); 
         setName(storedName);
@@ -53,8 +49,11 @@ const Navbar = () => {
       setRole(null);
       setName(null);
     }
-  }, []);
+  }, [token, setIsLoggedIn, setRole, setName, storedRole, storedName]);
 
+  const confirmLogout = () => {
+    logoutDialogDisclosure.onOpen();
+  };
 
   return (
     <Box bg={colorMode === "light" ? "gray.100" : "gray.800"} px={4}>
@@ -62,26 +61,17 @@ const Navbar = () => {
         {/* Hamburger Menu Icon "MOBILE" */}
         <IconButton
           size="md"
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          icon={menuDisclosure.isOpen ? <CloseIcon /> : <HamburgerIcon />}
           aria-label="Open Menu"
           display={{ md: "none" }}
-          onClick={isOpen ? onClose : onOpen}
+          onClick={menuDisclosure.onToggle}
         />
 
         {/* Logo and Links */}
         <HStack spacing={8} alignItems="center">
-          <Box
-            fontWeight="bold"
-            color={colorMode === "light" ? "black" : "white"}
-          >
-            Coffee Shop
-          </Box>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             <Link to="/">
-              <Button variant="ghost">Home</Button>
-            </Link>
-            <Link to="/products">
-              <Button variant="ghost">Products</Button>
+              <Button variant="ghost" fontWeight="bold">Coffee Shop</Button>
             </Link>
             <Link to="/about">
               <Button variant="ghost">About</Button>
@@ -89,54 +79,50 @@ const Navbar = () => {
             <Link to="/contact">
               <Button variant="ghost">Contact</Button>
             </Link>
-            { role === 'admin' && (
-            <Link to="/admin">
-              <Button variant="ghost">Admin Dashboard</Button>
-            </Link>
-)}
+            {role === 'admin' && (
+              <Link to="/admin">
+                <Button variant="ghost">Admin Dashboard</Button>
+              </Link>
+            )}
           </HStack>
         </HStack>
 
-          
-
-          {/* Sign In or Logout Button */}
-          <Flex alignItems="center">
+        {/* Sign In or Logout Button */}
+        <Flex alignItems="center">
           {isLoggedIn ? (
             <>
-            {name && (
-            <span>{name ? `Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}` : ''}</span>
-          )}
-            <Button colorScheme="teal" size="sm" mr={4} ml={4} onClick={confirmLogout}>
-              Logout
-            </Button>
+              {name && (
+                <span>{`Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}`}</span>
+              )}
+              <Button colorScheme="teal" size="sm" mr={4} ml={4} onClick={confirmLogout}>
+                Logout
+              </Button>
             </>
           ) : (
-            <>
-          <Link to="/login">
-            <Button colorScheme="teal" size="sm" mr={4}>
-              Sign In
-            </Button>
-          </Link>
-          </>
+            <Link to="/login">
+              <Button colorScheme="teal" size="sm" mr={4}>
+                Sign In
+              </Button>
+            </Link>
           )}
 
           {/* Plus Button */}
-          { role === 'admin' && (
-             <Link to="/create">
-            <Button mr={4} size="md">
-              <PlusSquareIcon fontSize={20} />
-            </Button>
-          </Link>
+          {role === 'admin' && (
+            <Link to="/create">
+              <Button mr={4} size="md">
+                <PlusSquareIcon fontSize={20} />
+              </Button>
+            </Link>
           )}
           <Link to="/cart">
-          <Button size="md">
-            <IoBagAddOutline fontSize={20} />
-          </Button>
+            <Button size="md">
+              <IoBagAddOutline fontSize={20} />
+            </Button>
           </Link>
 
           {/* Color Mode Toggle */}
           <IconButton
-          fontSize={20}
+            fontSize={20}
             ml={4}
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             aria-label="Toggle Color Mode"
@@ -146,7 +132,7 @@ const Navbar = () => {
       </Flex>
 
       {/* Collapsible Menu for Mobile */}
-      {isOpen ? (
+      {menuDisclosure.isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
             <Link to="/">Home</Link>
@@ -159,9 +145,9 @@ const Navbar = () => {
 
       {/* Logout Confirmation Dialog */}
       <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef} // Focus on cancel button by default
-        onClose={onClose}
+        isOpen={logoutDialogDisclosure.isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={logoutDialogDisclosure.onClose}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
@@ -174,14 +160,14 @@ const Navbar = () => {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
+              <Button ref={cancelRef} onClick={logoutDialogDisclosure.onClose}>
                 Cancel
               </Button>
               <Button
                 colorScheme="red"
                 onClick={() => {
-                  handleLogout(); // Call the logout function if confirmed
-                  onClose(); // Close the dialog after logout
+                  handleLogout();
+                  logoutDialogDisclosure.onClose();
                 }}
                 ml={3}
               >

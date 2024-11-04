@@ -106,7 +106,6 @@ export const useProductStore = create((set) => ({
 				return { success: false, message: data.message };
 			}
 
-			// Update the product's rating in the Zustand store
 			set((state) => ({
 				products: state.products.map((product) =>
 					product.productID === productID ? { ...product, rating: data.rating } : product
