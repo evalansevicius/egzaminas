@@ -1,7 +1,7 @@
 import { Container, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useProductStore } from "../store/product";
+import { useProductStore } from "../store/productStore";
 import ProductCard from "../components/ProductCard";
 
 const HomePage = () => {
@@ -10,7 +10,6 @@ const HomePage = () => {
 	useEffect(() => {
 		getProducts();
 	}, [getProducts]);
-	console.log("products", products);
 
 	return (
 		<Container maxW='container.xl' py={12}>

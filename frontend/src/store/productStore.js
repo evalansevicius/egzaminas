@@ -1,5 +1,11 @@
-import { create } from "zustand";
-import axios from "axios";
+import { create } from 'zustand';
+import {
+  createProductAPI,
+  getProductsAPI,
+  deleteProductAPI,
+  updateProductAPI,
+  incrementRatingAPI,
+} from '../services/productService';
 
 export const useProductStore = create((set) => ({
   products: [],
@@ -11,25 +17,18 @@ export const useProductStore = create((set) => ({
     }
 
     try {
-      const token = localStorage.getItem('token')
-      const res = await axios.post('http://localhost:8000/api/products', newProduct, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      });
-
-      set((state) => ({ products: [...state.products, res.data] }));
+      const data = await createProductAPI(newProduct);
+      set((state) => ({ products: [...state.products, data] }));
       return { success: true, message: "Product created successfully" };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || "Error creating product" };
+      return { success: false, message: error.message || "Error creating product" };
     }
   },
 
   getProducts: async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/', {withCredentials:true});
-      set((state) => ({ products: res.data.data }));
+      const products = await getProductsAPI();
+      set({ products });
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -37,24 +36,13 @@ export const useProductStore = create((set) => ({
 
   deleteProduct: async (productID) => {
     try {
-      const token = localStorage.getItem('token')
-      const res = await axios.delete(`http://localhost:8000/api/products/${productID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-
-      const data = res.data; 
+      const data = await deleteProductAPI(productID);
       if (!data.success) {
         return { success: false, message: data.message };
       }
-
       set((state) => ({
         products: state.products.filter((product) => product.productID !== productID),
       }));
-
       return { success: true, message: data.message };
     } catch (error) {
       console.error("Error deleting product:", error.message);
@@ -64,26 +52,15 @@ export const useProductStore = create((set) => ({
 
   updateProduct: async (productID, updatedProduct) => {
     try {
-      const token = localStorage.getItem('token')
-      const res = await axios.put(`http://localhost:8000/api/products/${productID}`, updatedProduct, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-
-      const data = res.data;  
+      const data = await updateProductAPI(productID, updatedProduct);
       if (!data.success) {
         return { success: false, message: data.message };
       }
-
       set((state) => ({
         products: state.products.map((product) =>
           product.productID === productID ? data.data : product
         ),
       }));
-
       return { success: true, message: data.message };
     } catch (error) {
       console.error("Error updating product:", error.message);
@@ -91,27 +68,17 @@ export const useProductStore = create((set) => ({
     }
   },
 
-  incrementRating: async (productID) => {
+  incrementRating: async (productID, increment) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.patch(`http://localhost:8000/api/products/${productID}/incrementRating`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      });
-
-      const data = res.data;
+      const data = await incrementRatingAPI(productID, increment);
       if (!data.success) {
         return { success: false, message: data.message };
       }
-
       set((state) => ({
         products: state.products.map((product) =>
           product.productID === productID ? { ...product, rating: data.rating } : product
         ),
       }));
-
       return { success: true, message: data.message, rating: data.rating };
     } catch (error) {
       console.error("Error incrementing rating:", error.message);
