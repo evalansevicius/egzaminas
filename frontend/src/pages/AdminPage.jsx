@@ -187,14 +187,14 @@ const AdminPage = () => {
             <Box key={order._id} p={5} shadow="md" borderWidth="1px" w="full">
               <Heading fontSize="xl">Order ID: {order._id}</Heading>
               <Text>UserID: {order.userID}</Text>
-              <Text>Total Price: ${order.totalPrice.toFixed(2)}</Text>
+              <Text>Total Price: €{order.totalPrice.toFixed(2)}</Text>
               <Divider my={2} />
               <Text fontWeight="bold">Items:</Text>
               {order.items.map((item) => (
                 <Box key={item.productID} pl={4} mt={2}>
                   <Text>Product ID: {item.productID}</Text>
                   <Text>Name: {item.name}</Text>
-                  <Text>Price: ${item.price}</Text>
+                  <Text>Price: €{item.price}</Text>
                   <Text>Quantity: {item.quantity}</Text>
                 </Box>
               ))}
