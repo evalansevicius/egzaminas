@@ -7,7 +7,12 @@ import "../CheckoutPage.css";
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const toast = useToast();
-
+  
+  useEffect(() => {
+        const storedUserID = localStorage.getItem("userID");
+        console.log("UserID from local storage on component mount:", storedUserID);
+    }, []);
+  
   const totalPrice = cart.reduce(
     (acc, product) => acc + product.price * product.quantity,
     0
