@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useCart } from "../contexts/CartContext";
 import { Box, Heading, Text, VStack, HStack, Image, useToast } from "@chakra-ui/react";
 import axios from "axios";
@@ -20,6 +20,7 @@ const CheckoutPage = () => {
 
   const handleCheckout = async () => {
     const orderData = {
+     userID: localStorage.getItem("userID"),
       items: cart.map((product) => ({
         productID: product.productID,
         name: product.name,
