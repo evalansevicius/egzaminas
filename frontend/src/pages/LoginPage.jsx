@@ -20,6 +20,10 @@ const LoginPage = () => {
         localStorage.setItem('token', token);
         localStorage.setItem('role', user.role);
         localStorage.setItem('name', user.name);
+        localStorage.setItem('userID', user.userID);
+
+        console.log("Stored userID in local storage:", localStorage.getItem("userID"));
+
         setIsLoggedIn(true);
         setRole(user.role);
         setName(user.name);
