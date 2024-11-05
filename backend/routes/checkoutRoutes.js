@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post('/checkout', async (req, res) => {
     const {userID, items, totalPrice } = req.body;
-    console.log("Received data:", { userID, items, totalPrice });
     if (!userID) {
         return res.status(400).json({ success: false, message: 'UserID is required' });
     }
