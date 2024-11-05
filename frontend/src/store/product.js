@@ -91,4 +91,31 @@ export const useProductStore = create((set) => ({
 		}
 	  },
 	  
+	  incrementRating: async (productID) => {
+		try {
+			const token = localStorage.getItem("token");
+			const res = await axios.patch(`http://localhost:8000/api/products/${productID}/incrementRating`, {}, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				withCredentials: true,
+			});
+
+			const data = res.data;
+			if (!data.success) {
+				return { success: false, message: data.message };
+			}
+
+			set((state) => ({
+				products: state.products.map((product) =>
+					product.productID === productID ? { ...product, rating: data.rating } : product
+				),
+			}));
+
+			return { success: true, message: data.message, rating: data.rating };
+		} catch (error) {
+			console.error("Error incrementing rating:", error.message);
+			return { success: false, message: "Failed to update rating" };
+		}
+	},
 }));
