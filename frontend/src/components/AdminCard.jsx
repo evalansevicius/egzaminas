@@ -21,7 +21,7 @@ import {
 	useToast,
 	VStack,
 } from "@chakra-ui/react";
-import { useProductStore } from "../store/product";
+import { useProductStore } from "../store/productStore";
 import { useState } from "react";
 import {AuthContext} from "../contexts/authContext";
 const AdminCard = ({ product }) => {

@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { IoBagAddOutline, IoStar } from 'react-icons/io5';
 import { useCart } from '../contexts/CartContext'; // Ensure this path is correct
-import { useProductStore } from '../store/product.js';
+import { useProductStore } from '../store/productStore.js';
 
 const ProductCard = ({ product }) => {
   const textColor = useColorModeValue('gray.600', 'gray.200');
@@ -21,40 +21,48 @@ const ProductCard = ({ product }) => {
   const incrementRating = useProductStore((state) => state.incrementRating); // For rating functionality
   const toast = useToast();
   const [rating, setRating] = useState(product.rating || 0);
-
-  // Increment rating function with localStorage validation
-  const handleIncrementRating = async () => {
+  const [hasRated, setHasRated] = useState(() => {
     const ratedProducts = JSON.parse(localStorage.getItem('ratedProducts')) || [];
+    return ratedProducts.includes(product.productID);
+  });
 
-    // Check if the product is already rated
-    if (ratedProducts.includes(product.productID)) {
-      toast({
-        title: 'Already Rated',
-        description: 'You can only rate this product once.',
-        status: 'info',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
+  // Toggle rating function with localStorage validation
+  const handleToggleRating = async () => {
+    // Retrieve rated products from localStorage and track toggle status directly
+    const ratedProducts = JSON.parse(localStorage.getItem('ratedProducts')) || [];
+    const alreadyRated = ratedProducts.includes(product.productID);
+  
     try {
-      const { success, rating: newRating } = await incrementRating(product.productID);
-
+      // Toggle rating by passing the opposite of current rated state
+      const { success, rating: newRating } = await incrementRating(product.productID, !alreadyRated);
+  
       if (success) {
-        setRating(newRating); // Update rating in the component
-
-        // Add the product to the list of rated products in localStorage
-        ratedProducts.push(product.productID);
-        localStorage.setItem('ratedProducts', JSON.stringify(ratedProducts));
-
-        toast({
-          title: 'Rating Updated',
-          description: `Rating for ${product.name} has been increased.`,
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
+        setRating(newRating);
+        setHasRated(!alreadyRated);
+  
+        if (!alreadyRated) {
+          // Add product to rated list in localStorage
+          ratedProducts.push(product.productID);
+          localStorage.setItem('ratedProducts', JSON.stringify(ratedProducts));
+          toast({
+            title: 'Rating Updated',
+            description: `Rating for ${product.name} has been increased.`,
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          // Remove product from rated list in localStorage
+          const updatedRatedProducts = ratedProducts.filter((id) => id !== product.productID);
+          localStorage.setItem('ratedProducts', JSON.stringify(updatedRatedProducts));
+          toast({
+            title: 'Rating Removed',
+            description: `Rating for ${product.name} has been removed.`,
+            status: 'info',
+            duration: 3000,
+            isClosable: true,
+          });
+        }
       }
     } catch (error) {
       toast({
@@ -66,6 +74,9 @@ const ProductCard = ({ product }) => {
       });
     }
   };
+  
+  
+  
 
   // Handle adding product to the cart
   const handleAddToCart = () => {
@@ -114,7 +125,7 @@ const ProductCard = ({ product }) => {
             onClick={handleAddToCart}
             aria-label="Add to Cart"
           />
-          <Button onClick={handleIncrementRating} colorScheme="yellow" leftIcon={<IoStar />}>
+          <Button onClick={handleToggleRating} colorScheme="yellow" leftIcon={<IoStar />}>
             {rating} {/* Display the current rating */}
           </Button>
         </HStack>
