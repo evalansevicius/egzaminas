@@ -31,7 +31,7 @@ function App() {
 		<Route path='/contact' element={<ContactPage />} />
 		<Route path='/about' element={<AboutPage />} />
 			</Routes>
-		    <Footer />
+
 		</Box>
 		</AuthProvider>
 	);

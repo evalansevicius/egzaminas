@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { Box, Button, Heading, Image, Text, VStack, HStack, useToast } from '@chakra-ui/react';
 import axios from 'axios'; // Import axios for making API requests
@@ -6,13 +6,18 @@ import axios from 'axios'; // Import axios for making API requests
 const CheckoutPage = () => {
     const { cart } = useCart();
     const toast = useToast(); // Initialize toast for notifications
-
+    useEffect(() => {
+        const storedUserID = localStorage.getItem("userID");
+        console.log("UserID from local storage on component mount:", storedUserID);
+    }, []);
     // Calculate total price
     const totalPrice = cart.reduce((acc, product) => acc + (product.price * product.quantity), 0);
 
     const handleCheckout = async () => {
+        const userID = localStorage.getItem("userID")
         // Prepare the checkout data
         const orderData = {
+            userID,
             items: cart.map(product => ({
                 productID: product.productID,
                 name: product.name,
@@ -21,7 +26,6 @@ const CheckoutPage = () => {
             })),
             totalPrice,
         };
-
         try {
             // Make API call to your checkout endpoint
             const response = await axios.post('http://localhost:8000/api/checkout', orderData, {
