@@ -1,21 +1,19 @@
 import React from 'react';
-import { Box, Text, Stack, IconButton, Heading, VStack, HStack, Button, Image, useToast } from '@chakra-ui/react';
-import { IoTrashOutline } from 'react-icons/io5'; // Trash icon for remove button
+import { Box, Text, Stack, IconButton, Heading, VStack, HStack, Button, Image, useToast, useColorModeValue } from '@chakra-ui/react';
+import { IoTrashOutline } from 'react-icons/io5';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
   const navigate = useNavigate();
-  const toast = useToast(); // For toast notifications
+  const toast = useToast();
 
-  // Calculate total price
   const totalPrice = cart.reduce(
     (acc, product) => acc + product.price * product.quantity,
     0
   );
 
-  // Handle Checkout button click
   const handleCheckout = () => {
     if (cart.length === 0) {
       toast({
@@ -26,44 +24,46 @@ const Cart = () => {
         isClosable: true,
       });
     } else {
-      navigate('/checkout'); // Redirect to the Checkout page
+      navigate('/checkout');
     }
   };
+
+  const footerBgColor = useColorModeValue('white', 'gray.800');
+  const footerTextColor = useColorModeValue('gray.800', 'white');
 
   return (
     <Box
       p={4}
       display="flex"
       flexDirection="column"
-      minHeight="100vh" // Ensures the full height of the viewport is used
+      minHeight="100vh"
     >
-      {/* Cart Title */}
       <Heading as="h2" size="lg" mb={4}>
         Your Cart
       </Heading>
 
-      {/* Cart Items Section */}
       <Box
         flex="1"
-        overflowY="auto" // Enable scroll if items overflow
-        mb={6} // Add space between items and checkout button
+        overflowY="auto"
+        mb={6}
       >
         {cart.length === 0 ? (
-          <Text>Your cart is empty.</Text>
+          <Text textAlign="center" fontSize="lg" color="gray.600">
+            Your cart is empty.
+          </Text>
         ) : (
           <>
-            {/* Displaying all cart items */}
             {cart.map((product) => (
               <Box
-                key={product.productID} // Ensure the correct product identifier is used
+                key={product.productID}
                 borderWidth={1}
                 borderRadius="lg"
                 p={4}
                 mb={4}
                 bg="gray.50"
+                boxShadow="sm"
               >
-                <HStack align="start" spacing={6}>
-                  {/* Product Image */}
+                <HStack align="start" spacing={6} justify="space-between">
                   <Image
                     src={product.image}
                     alt={product.name}
@@ -71,20 +71,20 @@ const Cart = () => {
                     objectFit="cover"
                   />
 
-                  {/* Product Details */}
-                  <VStack align="start" spacing={1}>
-                    <Text fontWeight="bold">{product.name}</Text>
+                  <VStack align="start" spacing={2} flex="1">
+                    <Text fontWeight="bold" fontSize="md">{product.name}</Text>
                     <Text fontSize="sm" color="gray.600">
                       Price: €{product.price.toFixed(2)}
                     </Text>
-                    <Text fontSize="sm" color="gray.600">
+                    <Text fontSize="sm" color="gray.600" noOfLines={2}>
                       Description: {product.description}
                     </Text>
-                    <HStack spacing={3}>
-                      {/* Increase/Decrease Buttons */}
+
+                    <HStack spacing={4}>
                       <Button
                         colorScheme="blue"
                         onClick={() => increaseQuantity(product.productID)}
+                        size="sm"
                       >
                         +
                       </Button>
@@ -92,19 +92,20 @@ const Cart = () => {
                       <Button
                         colorScheme="blue"
                         onClick={() => decreaseQuantity(product.productID)}
+                        size="sm"
                       >
                         -
                       </Button>
                     </HStack>
                   </VStack>
 
-                  {/* Remove Button */}
                   <IconButton
                     icon={<IoTrashOutline />}
                     colorScheme="red"
                     onClick={() => removeFromCart(product.productID)}
-                    aria-label="Remove from cart"
+                    aria-label={`Remove ${product.name} from cart`}
                     variant="ghost"
+                    size="lg"
                   />
                 </HStack>
               </Box>
@@ -113,29 +114,29 @@ const Cart = () => {
         )}
       </Box>
 
-      {/* Checkout Section */}
       <Box
         position="relative"
         bottom="0"
         width="100%"
         py={4}
-        bg="white"
+        bg={footerBgColor}
+        color={footerTextColor}
         boxShadow="lg"
         display="flex"
         flexDirection="column"
         alignItems="center"
+        borderTopWidth={1}
       >
-        {/* Total Price */}
         <Text fontWeight="bold" fontSize="lg" mb={2}>
           Total Price: €{totalPrice.toFixed(2)}
         </Text>
 
-        {/* Checkout Button */}
         <Button
           colorScheme="teal"
           onClick={handleCheckout}
-          size="sm" // Smaller button size
-          width="auto" // Automatically adjusts width to content
+          size="lg"
+          width="auto"
+          maxWidth="300px"
         >
           Proceed to Checkout
         </Button>

@@ -30,9 +30,9 @@ const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
   const navigate = useNavigate();
   const cancelRef = useRef();
-  const menuDisclosure = useDisclosure(); // For mobile menu
-  const logoutDialogDisclosure = useDisclosure(); // For logout dialog
-  const { colorMode, toggleColorMode } = useColorMode(); 
+  const menuDisclosure = useDisclosure();
+  const logoutDialogDisclosure = useDisclosure();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     if (token) {
@@ -58,7 +58,6 @@ const Navbar = () => {
   return (
     <Box bg={colorMode === "light" ? "gray.100" : "gray.800"} px={4}>
       <Flex h={16} alignItems="center" justifyContent="space-between">
-        {/* Hamburger Menu Icon "MOBILE" */}
         <IconButton
           size="md"
           icon={menuDisclosure.isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -66,8 +65,6 @@ const Navbar = () => {
           display={{ md: "none" }}
           onClick={menuDisclosure.onToggle}
         />
-
-        {/* Logo and Links */}
         <HStack spacing={8} alignItems="center">
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             <Link to="/">
@@ -86,8 +83,6 @@ const Navbar = () => {
             )}
           </HStack>
         </HStack>
-
-        {/* Sign In or Logout Button */}
         <Flex alignItems="center">
           {isLoggedIn ? (
             <>
@@ -105,8 +100,6 @@ const Navbar = () => {
               </Button>
             </Link>
           )}
-
-          {/* Plus Button */}
           {role === 'admin' && (
             <Link to="/create">
               <Button mr={4} size="md">
@@ -119,8 +112,6 @@ const Navbar = () => {
               <IoBagAddOutline fontSize={20} />
             </Button>
           </Link>
-
-          {/* Color Mode Toggle */}
           <IconButton
             fontSize={20}
             ml={4}
@@ -130,8 +121,6 @@ const Navbar = () => {
           />
         </Flex>
       </Flex>
-
-      {/* Collapsible Menu for Mobile */}
       {menuDisclosure.isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
@@ -142,8 +131,6 @@ const Navbar = () => {
           </Stack>
         </Box>
       ) : null}
-
-      {/* Logout Confirmation Dialog */}
       <AlertDialog
         isOpen={logoutDialogDisclosure.isOpen}
         leastDestructiveRef={cancelRef}
@@ -154,11 +141,9 @@ const Navbar = () => {
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Confirm Logout
             </AlertDialogHeader>
-
             <AlertDialogBody>
               Are you sure you want to log out?
             </AlertDialogBody>
-
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={logoutDialogDisclosure.onClose}>
                 Cancel
