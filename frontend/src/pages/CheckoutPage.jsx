@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   useToast,
   useColorModeValue,
   Button,
+  Input,
 } from "@chakra-ui/react";
 import axios from "axios";
 import "../CheckoutPage.css";
@@ -17,6 +18,17 @@ import "../CheckoutPage.css";
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const toast = useToast();
+
+  // State to manage the shipping form visibility
+  const [isFormVisible, setIsFormVisible] = useState(true);
+
+  // State for shipping details (e.g., the user can fill this in)
+  const [shippingDetails, setShippingDetails] = useState({
+    street: "",
+    city: "",
+    zip: "",
+    country: "",
+  });
 
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const textColor = useColorModeValue("gray.800", "gray.100");
@@ -32,6 +44,7 @@ const CheckoutPage = () => {
     0
   );
 
+  // Handle the checkout process
   const handleCheckout = async () => {
     const orderData = {
       userID: localStorage.getItem("userID"),
@@ -42,6 +55,7 @@ const CheckoutPage = () => {
         quantity: product.quantity,
       })),
       totalPrice,
+      shippingAddress: shippingDetails, // Adding shipping details to the order data
     };
 
     try {
@@ -54,6 +68,7 @@ const CheckoutPage = () => {
       );
       if (response.data.success) {
         clearCart();
+        setIsFormVisible(false); // Hide the form after successful checkout
         toast({
           title: "Checkout Successful",
           description: "Your order has been placed successfully.",
@@ -74,6 +89,15 @@ const CheckoutPage = () => {
     }
   };
 
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setShippingDetails((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   return (
     <Box
       className="checkout-page"
@@ -88,6 +112,51 @@ const CheckoutPage = () => {
       <Heading as="h2" size="lg" mb={4} color={textColor}>
         Checkout
       </Heading>
+
+      {isFormVisible ? (
+        <Box
+          className="shipping-form"
+          bg={useColorModeValue("white", "gray.700")}
+          p={4}
+          borderRadius="lg"
+          boxShadow="sm"
+          mb={4}
+          w="full"
+          maxW="lg"
+        >
+          <Heading size="md" mb={4}>
+            Shipping Address
+          </Heading>
+          <VStack spacing={4} align="stretch">
+            <Input
+              name="street"
+              value={shippingDetails.street}
+              onChange={handleInputChange}
+              placeholder="Street"
+            />
+            <Input
+              name="city"
+              value={shippingDetails.city}
+              onChange={handleInputChange}
+              placeholder="City"
+            />
+            <Input
+              name="zip"
+              value={shippingDetails.zip}
+              onChange={handleInputChange}
+              placeholder="Zip"
+            />
+            <Input
+              name="country"
+              value={shippingDetails.country}
+              onChange={handleInputChange}
+              placeholder="Country"
+            />
+          </VStack>
+        </Box>
+      ) : (
+        <Text color={textColor} mb={4}>Shipping form has been completed.</Text>
+      )}
 
       <VStack
         className="checkout-items"
