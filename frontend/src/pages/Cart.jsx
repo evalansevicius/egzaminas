@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Text, Stack, IconButton, Heading, VStack, HStack, Button, Image, useToast, useColorModeValue } from '@chakra-ui/react';
+import { Box, Text, Stack, useColorMode, IconButton, Heading, VStack, HStack, Button, Image, useToast, useColorModeValue } from '@chakra-ui/react';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ const Cart = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
   const { isLoggedIn, handleLogout } = useAuth(); // Get authentication state
   const navigate = useNavigate();
+  const { colorMode, toggleColorMode } = useColorMode();
   const toast = useToast();
 
   const totalPrice = cart.reduce(
@@ -87,7 +88,7 @@ const Cart = () => {
                 borderRadius="lg"
                 p={4}
                 mb={4}
-                bg="gray.50"
+                bg={colorMode === "light" ? "gray.100" : "gray.800"}
                 boxShadow="sm"
               >
                 <HStack align="start" spacing={6} justify="space-between">
@@ -99,11 +100,11 @@ const Cart = () => {
                   />
 
                   <VStack align="start" spacing={2} flex="1">
-                    <Text fontWeight="bold" fontSize="md">{product.name}</Text>
-                    <Text fontSize="sm" color="gray.600">
+                    <Text fontWeight="bold" fontSize="md" >{product.name}</Text>
+                    <Text fontSize="sm">
                       Price: €{product.price.toFixed(2)}
                     </Text>
-                    <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                    <Text fontSize="sm" noOfLines={2}>
                       Description: {product.description}
                     </Text>
 
@@ -112,6 +113,7 @@ const Cart = () => {
                         colorScheme="blue"
                         onClick={() => increaseQuantity(product.productID)}
                         size="sm"
+
                       >
                         +
                       </Button>
