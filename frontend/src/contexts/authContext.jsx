@@ -1,11 +1,16 @@
+// contexts/authContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 export const AuthContext = createContext();
+
+// Custom hook for consuming the AuthContext
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState('user');
   const [name, setName] = useState(null);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -14,17 +19,19 @@ export const AuthProvider = ({ children }) => {
     setRole(null);
     setName(null);
   };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedRole = localStorage.getItem('role');
     const storedName = localStorage.getItem('name');
 
-    if (token) {
+    if (token && storedRole && storedName) {
       setIsLoggedIn(true);
       setRole(storedRole);
       setName(storedName);
     }
-  }, []);  
+  }, []);
+
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout }}>
       {children}

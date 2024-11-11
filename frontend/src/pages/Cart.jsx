@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Text, Stack, IconButton, Heading, VStack, HStack, Button, Image, useToast, useColorModeValue } from '@chakra-ui/react';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';  // Import the useAuth hook
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { isLoggedIn, handleLogout } = useAuth(); // Get authentication state
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -15,6 +17,18 @@ const Cart = () => {
   );
 
   const handleCheckout = () => {
+    if (!isLoggedIn) {
+      toast({
+        title: "You need to be logged in.",
+        description: "Please log in to proceed with the checkout.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate('/login');  // Redirect to login page
+      return;
+    }
+
     if (cart.length === 0) {
       toast({
         title: "Cart is empty.",
@@ -30,6 +44,19 @@ const Cart = () => {
 
   const footerBgColor = useColorModeValue('white', 'gray.800');
   const footerTextColor = useColorModeValue('gray.800', 'white');
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Not logged in",
+        description: "You need to log in to view your cart.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate('/login'); // Redirect user to login if they are not logged in
+    }
+  }, [isLoggedIn, navigate, toast]);
 
   return (
     <Box
