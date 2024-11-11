@@ -100,23 +100,30 @@ const deleteProduct = async (req, res) => {
 
   const incrementRating = async (req, res) => {
     const { productID } = req.params;
-    
+    const { increment } = req.body; // Expect a boolean to decide increment or decrement
+  
     try {
-      const product = await Product.findOne ({ productID });
+      const product = await Product.findOne({ productID });
       if (!product) {
-        return res.status(404).json ({ message: "No Product found"});
+        return res.status(404).json({ message: "No Product found" });
       }
-      product.rating = product.rating ? product.rating + 1 : 1;
-
+  
+      // Adjust rating based on the `increment` flag
+      if (increment) {
+        product.rating = product.rating ? product.rating + 1 : 1;
+      } else {
+        product.rating = product.rating > 0 ? product.rating - 1 : 0;
+      }
+  
       await product.save();
-
-      res.status(200).json ({ success: true, message: "rating updated! ", rating: product.rating});
-     
-    } catch (error){
+  
+      res.status(200).json({ success: true, message: "Rating updated!", rating: product.rating });
+    } catch (error) {
       console.log("Error incrementing Rating: ", error.message);
-      res.status(500).json ({ message: "Server Error" });
+      res.status(500).json({ message: "Server Error" });
     }
   };
+  
   
 
 export {

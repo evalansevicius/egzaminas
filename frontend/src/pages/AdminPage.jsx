@@ -1,71 +1,53 @@
-import { useState } from "react";
-import { Container, SimpleGrid, Text, VStack, Button, Input, HStack, useToast, Box } from "@chakra-ui/react";
-import { useEffect } from "react";
+// src/pages/AdminPage.js
+
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Container,
+  SimpleGrid,
+  Text,
+  VStack,
+  Button,
+  HStack,
+  useToast,
+  Box,
+  Heading,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { useProductStore } from "../store/product"; // Add your user management store here if needed
+import { useProductStore } from "../store/productStore";
 import AdminCard from "../components/AdminCard";
-import axios from "axios";
+import OrdersDialog from "../components/OrdersDialog";
+import RoleDialog from "../components/RoleDialog";
+import { fetchOrders, changeUserRole } from "../services/adminService";
 
 const AdminPage = () => {
   const { getProducts, products } = useProductStore();
-  const [userID, setUserID] = useState(""); // To store userID input
+  const [userID, setUserID] = useState("");
+  const [orders, setOrders] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
     getProducts();
   }, [getProducts]);
 
-
-
-  // Function to handle promoting a user to admin
-  const promoteToAdmin = async () => {
-    if (!userID) {
-      toast({
-        title: "User ID required",
-        description: "Please enter a valid user ID.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
+  const openOrdersDialog = async () => {
     try {
-      const token = localStorage.getItem("token"); // Make sure you have the token
-
-      // Call the API to promote the user
-      const response = await axios.post(
-        "http://localhost:8000/api/promote", 
-        { userID }, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // Show success message
-      toast({
-        title: "Success!",
-        description: `User with ID: ${userID} promoted to admin successfully.`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-
-      // Clear the input field
-      setUserID("");
+      const fetchedOrders = await fetchOrders();
+      setOrders(fetchedOrders);
+      setIsDialogOpen(true);
     } catch (error) {
-      console.error("Error promoting user to admin:", error);
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to promote user to admin.",
+        description: "Failed to fetch orders.",
         status: "error",
         duration: 5000,
         isClosable: true,
       });
     }
   };
-  const demoteFromAdmin = async () => {
+
+  const handleRoleChange = async (action) => {
     if (!userID) {
       toast({
         title: "User ID required",
@@ -78,34 +60,20 @@ const AdminPage = () => {
     }
 
     try {
-      const token = localStorage.getItem("token"); // Make sure you have the token
-
-      // Call the API to promote the user
-      const response = await axios.post(
-        "http://localhost:8000/api/demote", 
-        { userID }, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // Show success message
+      await changeUserRole(userID, action);
       toast({
         title: "Success!",
-        description: `User with ID: ${userID} demoted from admin successfully.`,
+        description: `User with ID: ${userID} successfully ${action === "promote" ? "promoted to" : "demoted from"} admin.`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-
-      // Clear the input field
       setUserID("");
+      setIsRoleDialogOpen(false);
     } catch (error) {
-      console.error("Error demoting admin to user:", error);
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to demote admin to user",
+        description: `Failed to ${action === "promote" ? "promote" : "demote"} user.`,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -114,58 +82,38 @@ const AdminPage = () => {
   };
 
   return (
-    <Container maxW='container.xl' py={12}>
+    <Container maxW="container.xl" py={12}>
       <VStack spacing={8}>
-	  <HStack spacing={4}>
-            <Input
-              placeholder="Enter User ID"
-              value={userID}
-              onChange={(e) => setUserID(e.target.value)}
-            />
-            <Button colorScheme="green" onClick={promoteToAdmin}>
-              Promote
-            </Button>
-			<Button colorScheme="red" onClick={demoteFromAdmin}>
-              Demote
-            </Button>
-          </HStack>
-        <Text
-          fontSize={"30"}
-          fontWeight={"bold"}
-          bgGradient={"linear(to-r, cyan.400, blue.500)"}
-          bgClip={"text"}
-          textAlign={"center"}
-        >
+        <HStack spacing={4}>
+          <Button colorScheme="blue" onClick={openOrdersDialog}>Orders</Button>
+          <Button colorScheme="purple" onClick={() => setIsRoleDialogOpen(true)}>Roles</Button>
+        </HStack>
+        
+        <Text fontSize="30" fontWeight="bold" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" textAlign="center">
           Current Products 🚀
         </Text>
-        
 
-        <SimpleGrid
-          columns={{
-            base: 1,
-            md: 2,
-            lg: 3,
-          }}
-          spacing={10}
-          w={"full"}
-        >
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} w="full">
           {products.map((product) => (
             <AdminCard key={product.productID} product={product} />
           ))}
         </SimpleGrid>
 
         {products.length === 0 && (
-          <Text fontSize='xl' textAlign={"center"} fontWeight='bold' color='gray.500'>
-            No products found 😢{" "}
-            <Link to={"/create"}>
-              <Text as='span' color='blue.500' _hover={{ textDecoration: "underline" }}>
-                Create a product
-              </Text>
-            </Link>
+          <Text fontSize="xl" textAlign="center" fontWeight="bold" color="gray.500">
+            No products found 😢 <Link to="/create"><Text as="span" color="blue.500" _hover={{ textDecoration: "underline" }}>Create a product</Text></Link>
           </Text>
         )}
 
-
+        <OrdersDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} orders={orders} />
+        <RoleDialog
+          isOpen={isRoleDialogOpen}
+          onClose={() => setIsRoleDialogOpen(false)}
+          userID={userID}
+          setUserID={setUserID}
+          onPromote={() => handleRoleChange("promote")}
+          onDemote={() => handleRoleChange("demote")}
+        />
       </VStack>
     </Container>
   );

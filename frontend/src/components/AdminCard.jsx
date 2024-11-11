@@ -21,7 +21,7 @@ import {
 	useToast,
 	VStack,
 } from "@chakra-ui/react";
-import { useProductStore } from "../store/product";
+import { useProductStore } from "../store/productStore";
 import { useState } from "react";
 import {AuthContext} from "../contexts/authContext";
 const AdminCard = ({ product }) => {
@@ -100,7 +100,7 @@ const AdminCard = ({ product }) => {
 				<Text fontSize='sm' color={textColor} mb={4}>
 					{product.description}
 				</Text>
-				{ role === 'admin' && (
+				{ role === 'admin' || role === 'superadmin' && (
 				<HStack spacing={2}>
 					<IconButton icon={<EditIcon />} onClick={onOpen} colorScheme='blue' />
 					<IconButton
