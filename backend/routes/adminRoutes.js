@@ -1,7 +1,7 @@
 import express from 'express';
 
 import {promoteToAdmin, demoteFromAdmin} from '../controllers/authController.js';
-import { isAdmin } from '../helpers/auth.js';
+import { isAdmin, requireAdminOrSuperadmin } from '../helpers/auth.js';
 import {createProduct, deleteProduct} from '../controllers/productController.js';
 
 const router = express.Router();

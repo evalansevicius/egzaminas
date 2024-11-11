@@ -41,7 +41,7 @@ const isAdmin = async (req, res, next) => {
         return res.status(401).json({ message: 'Invalid user.' });
       }
   
-      if (user.role !== 'admin') {
+      if (user.role !== 'admin' && user.role !== 'superadmin') {
         return res.status(403).json({ message: 'Access denied. Admins only.' });
       }
   
@@ -54,10 +54,19 @@ const isAdmin = async (req, res, next) => {
     }
   };
 
+// Example middleware
+const requireAdminOrSuperadmin = (req, res, next) => {
+    const userRole = req.user?.role;
+    if (userRole === 'admin' || userRole === 'superadmin') {
+      return next();
+    }
+    res.status(403).json({ message: "Forbidden: Insufficient permissions" });
+  };
   
   
 export {
     hashPassword,
     comparePassword,
-    isAdmin
+    isAdmin,
+    requireAdminOrSuperadmin
 }

@@ -28,7 +28,7 @@ const OrdersDialog = ({ isOpen, onClose, orders }) => {
   return (
     <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
       <AlertDialogOverlay>
-        <AlertDialogContent maxH="500px" overflowY="auto">
+        <AlertDialogContent maxH="800px" maxW="800px" overflowY="auto">
           <Box
             position="sticky"
             top="0"
@@ -49,6 +49,7 @@ const OrdersDialog = ({ isOpen, onClose, orders }) => {
                   <Box key={order._id} p={5} shadow="md" borderWidth="1px" w="full">
                     <Heading fontSize="xl">Order ID: {order._id}</Heading>
                     <Text>UserID: {order.userID}</Text>
+                    <Text>UserName: {order.name}</Text>
                     <Text>Total Price: {formatPrice(order.totalPrice)}</Text>
                     <Divider my={2} />
                     <Text fontWeight="bold">Items:</Text>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box,
   Button,
@@ -21,6 +21,7 @@ import {
 import { IoBagAddOutline, IoStar } from "react-icons/io5";
 import { useCart } from "../contexts/CartContext";
 import { useProductStore } from "../store/productStore.js";
+import { AuthContext } from "../contexts/authContext";
 
 const ProductCard = ({ product }) => {
   const textColor = useColorModeValue("gray.600", "gray.200");
@@ -28,6 +29,7 @@ const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const incrementRating = useProductStore((state) => state.incrementRating);
   const toast = useToast();
+  const { isLoggedIn } = useContext(AuthContext);
   const [rating, setRating] = useState(product.rating || 0);
   const [hasRated, setHasRated] = useState(() => {
     const ratedProducts =
@@ -38,6 +40,16 @@ const ProductCard = ({ product }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleToggleRating = async () => {
+    if (!isLoggedIn) {
+        toast({
+          title: "Login Required",
+          description: "You must be logged in to rate products.",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
     const ratedProducts =
       JSON.parse(localStorage.getItem("ratedProducts")) || [];
     const alreadyRated = ratedProducts.includes(product.productID);

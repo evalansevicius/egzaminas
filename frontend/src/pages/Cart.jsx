@@ -3,7 +3,7 @@ import { Box, Text, Stack, IconButton, Heading, VStack, HStack, Button, Image, u
 import { IoTrashOutline } from 'react-icons/io5';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';  // Import the useAuth hook
+import { useAuth } from '../contexts/authContext';  // Import the useAuth hook
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();

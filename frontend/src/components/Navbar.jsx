@@ -76,7 +76,7 @@ const Navbar = () => {
             <Link to="/contact">
               <Button variant="ghost">Contact</Button>
             </Link>
-            {role === 'admin' && (
+            {(role === 'admin' || role === 'superadmin') && (
               <Link to="/admin">
                 <Button variant="ghost">Admin Dashboard</Button>
               </Link>
@@ -87,7 +87,7 @@ const Navbar = () => {
           {isLoggedIn ? (
             <>
               {name && (
-                <span>{`Welcome, ${name}${role === 'admin' ? ' (Admin)' : ''}`}</span>
+                <span>{`Welcome, ${name} ${role === 'superadmin' ? '(Superadmin)' : role === 'admin' ? '(Admin)' : ''}`}</span>
               )}
               <Button colorScheme="teal" size="sm" mr={4} ml={4} onClick={confirmLogout}>
                 Logout
@@ -100,7 +100,7 @@ const Navbar = () => {
               </Button>
             </Link>
           )}
-          {role === 'admin' && (
+          {(role === 'admin' || role === 'superadmin') && (
             <Link to="/create">
               <Button mr={4} size="md">
                 <PlusSquareIcon fontSize={20} />

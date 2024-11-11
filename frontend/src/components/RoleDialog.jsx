@@ -11,9 +11,24 @@ import {
   AlertDialogFooter,
 } from "@chakra-ui/react";
 
-const RoleDialog = ({ isOpen, onClose, userID, setUserID, onPromote, onDemote }) => {
+const RoleDialog = ({ isOpen, onClose, userID, setUserID, onPromote, onDemote, userRole }) => {
     const cancelRef = useRef();
     
+    const handlePromote = () => {
+      if (userRole === "superadmin") {
+        alert("Superadmin cannot be promoted.");
+        return;
+      }
+      onPromote();
+    };
+  
+    const handleDemote = () => {
+      if (userRole === "superadmin") {
+        alert("Superadmin cannot be demoted.");
+        return;
+      }
+      onDemote();
+    };
   return (
     <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
       <AlertDialogOverlay>
@@ -34,8 +49,8 @@ const RoleDialog = ({ isOpen, onClose, userID, setUserID, onPromote, onDemote })
 
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>Cancel</Button>
-            <Button colorScheme="green" onClick={onPromote} ml={3}>Promote</Button>
-            <Button colorScheme="red" onClick={onDemote} ml={3}>Demote</Button>
+            <Button colorScheme="green" onClick={handlePromote} ml={3}>Promote</Button>
+            <Button colorScheme="red" onClick={handleDemote} ml={3}>Demote</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>

@@ -91,37 +91,54 @@ const loginUser = async (req, res) => {
 
 
 export const promoteToAdmin = async (req, res) => {
-  const { userID } = req.body;
-
-  try {
-    const user = await User.findOne({ userID });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.role = 'admin';
-    await user.save();
-
-    res.status(200).json({ success: true, message: 'User promoted to admin', user });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-export const demoteFromAdmin = async (req, res) => {
-    const { userID } = req.body;
-  
     try {
-      const user = await User.findOne({ userID });
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+      const { userID } = req.body;
+  
+      // Find the target user
+      const targetUser = await User.findOne({ userID });
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
       }
   
-      user.role = 'user';
-      await user.save();
+      // If the target user is a superadmin, only allow another superadmin to promote
+      if (targetUser.role === 'superadmin' && req.user.role !== 'superadmin') {
+        return res.status(403).json({ message: "Only superadmins can promote or demote other superadmins." });
+      }
   
-      res.status(200).json({ success: true, message: 'User demoted from admin', user });
+      // Promote the user to admin
+      targetUser.role = 'admin';
+      await targetUser.save();
+  
+      res.status(200).json({ message: "User promoted to admin successfully" });
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+      console.error("Error promoting user:", error);
+      res.status(500).json({ message: "Failed to promote user" });
+    }
+  };
+  
+  export const demoteFromAdmin = async (req, res) => {
+    try {
+      const { userID } = req.body;
+  
+      // Find the target user
+      const targetUser = await User.findOne({ userID });
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // If the target user is a superadmin, only allow another superadmin to demote
+      if (targetUser.role === 'superadmin' && req.user.role !== 'superadmin') {
+        return res.status(403).json({ message: "Only superadmins can promote or demote other superadmins." });
+      }
+  
+      // Demote the user from admin to user
+      targetUser.role = 'user';
+      await targetUser.save();
+  
+      res.status(200).json({ message: "User demoted successfully" });
+    } catch (error) {
+      console.error("Error demoting user:", error);
+      res.status(500).json({ message: "Failed to demote user" });
     }
   };
 

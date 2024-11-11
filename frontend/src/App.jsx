@@ -18,8 +18,9 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Box minH={"100vh"} bg={useColorModeValue("gray.100", "gray.900")}>
+        <Box minH={"100vh"} display="flex" flexDirection="column"  bg={useColorModeValue("gray.100", "gray.900")}>
           <Navbar />
+          <Box flex="1" display="flex" flexDirection="column">
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route path='/login' element={<LoginPage />} />
@@ -31,6 +32,7 @@ function App() {
             <Route path='/contact' element={<ContactPage />} />
             <Route path='/about' element={<AboutPage />} />
           </Routes>
+          </Box>
           <Footer />
         </Box>
       </CartProvider>

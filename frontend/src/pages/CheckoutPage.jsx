@@ -12,15 +12,14 @@ import {
   Button,
   Input,
 } from "@chakra-ui/react";
-import axios from "axios";
-import "../CheckoutPage.css";
+import { checkoutAPI } from "../services/checkoutService.js"; // Import the API function
 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const toast = useToast();
 
   const [isFormVisible, setIsFormVisible] = useState(true);
-  const [shippingDetails, setShippingDetails] = useState({
+  const [shippingAddress, setShippingAddress] = useState({
     street: "",
     city: "",
     zip: "",
@@ -44,6 +43,7 @@ const CheckoutPage = () => {
   const handleCheckout = async () => {
     const orderData = {
       userID: localStorage.getItem("userID"),
+      name: localStorage.getItem("name"),
       items: cart.map((product) => ({
         productID: product.productID,
         name: product.name,
@@ -51,18 +51,25 @@ const CheckoutPage = () => {
         quantity: product.quantity,
       })),
       totalPrice,
-      shippingAddress: shippingDetails,
+      shippingAddress,
     };
 
+    console.log("Order Data:", orderData);
+
+    if (!shippingAddress.street || !shippingAddress.city || !shippingAddress.zip || !shippingAddress.country) {
+      toast({
+        title: "Incomplete Shipping Address",
+        description: "Please fill in all the shipping details.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    } 
+
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/checkout",
-        orderData,
-        {
-          withCredentials: true,
-        }
-      );
-      if (response.data.success) {
+      const response = await checkoutAPI(orderData); // Use checkoutAPI here
+      if (response.success) {
         clearCart();
         setIsFormVisible(false);
         toast({
@@ -87,7 +94,7 @@ const CheckoutPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setShippingDetails((prevState) => ({
+    setShippingAddress((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -125,25 +132,25 @@ const CheckoutPage = () => {
           <VStack spacing={4} align="stretch">
             <Input
               name="street"
-              value={shippingDetails.street}
+              value={shippingAddress.street}
               onChange={handleInputChange}
               placeholder="Street"
             />
             <Input
               name="city"
-              value={shippingDetails.city}
+              value={shippingAddress.city}
               onChange={handleInputChange}
               placeholder="City"
             />
             <Input
               name="zip"
-              value={shippingDetails.zip}
+              value={shippingAddress.zip}
               onChange={handleInputChange}
               placeholder="Zip"
             />
             <Input
               name="country"
-              value={shippingDetails.country}
+              value={shippingAddress.country}
               onChange={handleInputChange}
               placeholder="Country"
             />
