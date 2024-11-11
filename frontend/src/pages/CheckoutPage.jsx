@@ -19,10 +19,7 @@ const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const toast = useToast();
 
-  // State to manage the shipping form visibility
   const [isFormVisible, setIsFormVisible] = useState(true);
-
-  // State for shipping details (e.g., the user can fill this in)
   const [shippingDetails, setShippingDetails] = useState({
     street: "",
     city: "",
@@ -44,7 +41,6 @@ const CheckoutPage = () => {
     0
   );
 
-  // Handle the checkout process
   const handleCheckout = async () => {
     const orderData = {
       userID: localStorage.getItem("userID"),
@@ -55,7 +51,7 @@ const CheckoutPage = () => {
         quantity: product.quantity,
       })),
       totalPrice,
-      shippingAddress: shippingDetails, // Adding shipping details to the order data
+      shippingAddress: shippingDetails,
     };
 
     try {
@@ -68,7 +64,7 @@ const CheckoutPage = () => {
       );
       if (response.data.success) {
         clearCart();
-        setIsFormVisible(false); // Hide the form after successful checkout
+        setIsFormVisible(false);
         toast({
           title: "Checkout Successful",
           description: "Your order has been placed successfully.",
@@ -89,7 +85,6 @@ const CheckoutPage = () => {
     }
   };
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingDetails((prevState) => ({

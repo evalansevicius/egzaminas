@@ -18,12 +18,11 @@ const OrdersDialog = ({ isOpen, onClose, orders }) => {
   const { colorMode } = useColorMode();
   const cancelRef = useRef();
 
-  // Helper function to safely format prices
   const formatPrice = (price) => {
     if (price && !isNaN(price)) {
       return `€${price.toFixed(2)}`;
     }
-    return "€0.00";  // Default fallback in case of invalid price
+    return "€0.00";
   };
 
   return (
@@ -50,19 +49,18 @@ const OrdersDialog = ({ isOpen, onClose, orders }) => {
                   <Box key={order._id} p={5} shadow="md" borderWidth="1px" w="full">
                     <Heading fontSize="xl">Order ID: {order._id}</Heading>
                     <Text>UserID: {order.userID}</Text>
-                    <Text>Total Price: {formatPrice(order.totalPrice)}</Text> {/* Safely format the total price */}
+                    <Text>Total Price: {formatPrice(order.totalPrice)}</Text>
                     <Divider my={2} />
                     <Text fontWeight="bold">Items:</Text>
                     {order.items.map((item) => (
                       <Box key={item.productID} pl={4} mt={2}>
                         <Text>Product ID: {item.productID}</Text>
                         <Text>Name: {item.name}</Text>
-                        <Text>Price: {formatPrice(item.price)}</Text> {/* Safely format the item price */}
+                        <Text>Price: {formatPrice(item.price)}</Text>
                         <Text>Quantity: {item.quantity}</Text>
                       </Box>
                     ))}
                     <Divider my={2} />
-                    {/* Display Shipping Details */}
                     <Box mt={4}>
                       <Text fontWeight="bold">Shipping Address:</Text>
                       <Text>Street: {order.shippingAddress?.street}</Text>
