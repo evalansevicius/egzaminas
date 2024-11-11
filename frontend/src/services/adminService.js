@@ -14,3 +14,13 @@ export const changeUserRole = async (userID, action) => {
     },
   });
 };
+
+export const getUsers = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/users');
+    return response.data.users; 
+  } catch (error) {
+    console.error("Error in getUsers:", error);
+    throw error.response?.data?.message || "Failed to get users. Please try again.";
+  }
+};

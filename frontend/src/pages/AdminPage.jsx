@@ -18,12 +18,15 @@ import AdminCard from "../components/AdminCard";
 import OrdersDialog from "../components/OrdersDialog";
 import RoleDialog from "../components/RoleDialog";
 import { fetchOrders, changeUserRole } from "../services/adminService";
-
+import UsersDialog from "../components/UsersDialog";
+import { getUsers } from "../services/adminService";
 const AdminPage = () => {
   const { getProducts, products } = useProductStore();
   const [userID, setUserID] = useState("");
   const [orders, setOrders] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [isOrdersDialogOpen, setIsOrdersDialogOpen] = useState(false);
+  const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const toast = useToast();
 
@@ -31,11 +34,27 @@ const AdminPage = () => {
     getProducts();
   }, [getProducts]);
 
+  const openUsersDialog = async () => {
+    try {
+      const fetchedUsers = await getUsers();
+      setUsers(fetchedUsers);
+      setIsUsersDialogOpen(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch Users.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   const openOrdersDialog = async () => {
     try {
       const fetchedOrders = await fetchOrders();
       setOrders(fetchedOrders);
-      setIsDialogOpen(true);
+      setIsOrdersDialogOpen(true);
     } catch (error) {
       toast({
         title: "Error",
@@ -87,6 +106,7 @@ const AdminPage = () => {
         <HStack spacing={4}>
           <Button colorScheme="blue" onClick={openOrdersDialog}>Orders</Button>
           <Button colorScheme="purple" onClick={() => setIsRoleDialogOpen(true)}>Roles</Button>
+          <Button colorScheme="yellow" onClick={openUsersDialog}>Users</Button>
         </HStack>
         
         <Text fontSize="30" fontWeight="bold" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" textAlign="center">
@@ -105,7 +125,8 @@ const AdminPage = () => {
           </Text>
         )}
 
-        <OrdersDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} orders={orders} />
+        <OrdersDialog isOpen={isOrdersDialogOpen} onClose={() => setIsOrdersDialogOpen(false)} orders={orders} />
+        <UsersDialog isOpen={isUsersDialogOpen} onClose={() => setIsUsersDialogOpen(false)} users={users} />
         <RoleDialog
           isOpen={isRoleDialogOpen}
           onClose={() => setIsRoleDialogOpen(false)}

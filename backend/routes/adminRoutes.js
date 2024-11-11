@@ -1,6 +1,6 @@
 import express from 'express';
 
-import {promoteToAdmin, demoteFromAdmin} from '../controllers/authController.js';
+import {promoteToAdmin, demoteFromAdmin, getUsers} from '../controllers/authController.js';
 import { isAdmin, requireAdminOrSuperadmin } from '../helpers/auth.js';
 import {createProduct, deleteProduct} from '../controllers/productController.js';
 
@@ -17,4 +17,5 @@ router.post('/promote', isAdmin, promoteToAdmin);
 // Admin can demote another user from admin
 router.post('/demote', isAdmin, demoteFromAdmin);
 
+router.get('/users', getUsers, isAdmin);
 export default router;
