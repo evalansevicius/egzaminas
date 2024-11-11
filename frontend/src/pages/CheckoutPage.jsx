@@ -9,6 +9,7 @@ import {
   Image,
   useToast,
   useColorModeValue,
+  useColorMode,
   Button,
   Input,
 } from "@chakra-ui/react";
@@ -17,7 +18,7 @@ import { checkoutAPI } from "../services/checkoutService.js"; // Import the API 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const toast = useToast();
-
+  const { colorMode } = useColorMode();
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [shippingAddress, setShippingAddress] = useState({
     street: "",
@@ -26,9 +27,9 @@ const CheckoutPage = () => {
     country: "",
   });
 
-  const bgColor = useColorModeValue("gray.50", "gray.800");
-  const textColor = useColorModeValue("gray.800", "gray.100");
-  const totalPriceTextColor = useColorModeValue("black", "white");
+  //const bgColor = useColorModeValue("gray.50", "gray.800");
+ // const textColor = useColorModeValue("gray.800", "gray.100");
+ // const totalPriceTextColor = useColorModeValue("black", "white");
 
   useEffect(() => {
     const storedUserID = localStorage.getItem("userID");
@@ -104,14 +105,14 @@ const CheckoutPage = () => {
     <Box
       className="checkout-page"
       p={4}
-      bg={bgColor}
       minHeight="100vh"
       display="flex"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      bg={colorMode === "light" ? "gray.100" : "gray.800"}
     >
-      <Heading as="h2" size="lg" mb={4} color={textColor}>
+      <Heading as="h2" size="lg" mb={4} >
         Checkout
       </Heading>
 
@@ -157,7 +158,7 @@ const CheckoutPage = () => {
           </VStack>
         </Box>
       ) : (
-        <Text color={textColor} mb={4}>Shipping form has been completed.</Text>
+        <Text mb={4}>Shipping form has been completed.</Text>
       )}
 
       <VStack
@@ -168,7 +169,7 @@ const CheckoutPage = () => {
         w="100%"
       >
         {cart.length === 0 ? (
-          <Text color={textColor}>Your cart is empty.</Text>
+          <Text>Your cart is empty.</Text>
         ) : (
           cart.map((product) => (
             <Box
@@ -189,11 +190,11 @@ const CheckoutPage = () => {
                   borderRadius="md"
                 />
                 <Box className="product-details">
-                  <Text fontWeight="bold" color={textColor}>
+                  <Text fontWeight="bold">
                     {product.name}
                   </Text>
-                  <Text color={textColor}>Price: €{product.price.toFixed(2)}</Text>
-                  <Text color={textColor}>Quantity: {product.quantity}</Text>
+                  <Text>Price: €{product.price.toFixed(2)}</Text>
+                  <Text>Quantity: {product.quantity}</Text>
                 </Box>
               </HStack>
             </Box>
@@ -216,7 +217,6 @@ const CheckoutPage = () => {
             className="page-total"
             fontSize="lg"
             fontWeight="bold"
-            color={totalPriceTextColor}
             mb={4}
           >
             Total Price: €{totalPrice.toFixed(2)}
