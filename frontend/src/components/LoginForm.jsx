@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { VStack, Button, Text, useToast } from '@chakra-ui/react';
+import { VStack, Button, Text, useToast, IconButton } from '@chakra-ui/react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
 import FormField from './FormField';
 import { loginUser } from '../services/authService';
+import { AiOutlineLogin } from "react-icons/ai";
 
 const LoginForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -59,7 +60,6 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing={4}>
-        {/* Email Field */}
         <FormField
           id="email"
           label="Email"
@@ -76,7 +76,6 @@ const LoginForm = () => {
           error={errors.email}
         />
 
-        {/* Password Field */}
         <FormField
           id="password"
           label="Password"
@@ -93,10 +92,15 @@ const LoginForm = () => {
           error={errors.password}
         />
 
-        {/* Submit Button */}
-        <Button type="submit" colorScheme="blue" width="full">Login</Button>
+        <IconButton 
+          type="submit" 
+          colorScheme="teal" 
+          size="lg" 
+          icon={<AiOutlineLogin />} 
+          aria-label="Login" 
+          width="full"
+        />
 
-        {/* Link to Register */}
         <Text as='span' color='blue.500' _hover={{ textDecoration: "underline" }}>
           <Link to="/register">Don't have an account? Register</Link>
         </Text>

@@ -17,6 +17,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  VStack,
 } from "@chakra-ui/react";
 import { IoBagAddOutline, IoStar } from "react-icons/io5";
 import { useCart } from "../contexts/CartContext";
@@ -41,15 +42,16 @@ const ProductCard = ({ product }) => {
 
   const handleToggleRating = async () => {
     if (!isLoggedIn) {
-        toast({
-          title: "Login Required",
-          description: "You must be logged in to rate products.",
-          status: "warning",
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
+      toast({
+        title: "Login Required",
+        description: "You must be logged in to rate products.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const ratedProducts =
       JSON.parse(localStorage.getItem("ratedProducts")) || [];
     const alreadyRated = ratedProducts.includes(product.productID);
@@ -136,19 +138,17 @@ const ProductCard = ({ product }) => {
           onClick={onOpen}
         />
 
-        <Box p={4}>
-          <Heading as="h3" size="md" mb={2}>
+        <VStack p={4} align="start" spacing={4}>
+          <Heading as="h3" size="md" mb={2} noOfLines={1}>
             {product.name}
           </Heading>
           <Text fontWeight="bold" fontSize="xl" color={textColor} mb={4}>
             €{product.price}
           </Text>
 
-          <Text fontSize="sm" color={textColor} mb={4}>
-            {product.description}
-          </Text>
+          {/* No description shown here on the card */}
 
-          <HStack spacing={2}>
+          <HStack spacing={4} width="100%" justify="space-between">
             <IconButton
               colorScheme="teal"
               icon={<IoBagAddOutline />}
@@ -163,9 +163,10 @@ const ProductCard = ({ product }) => {
               {rating}
             </Button>
           </HStack>
-        </Box>
+        </VStack>
       </Box>
 
+      {/* Modal for full product details */}
       <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
         <ModalOverlay />
         <ModalContent maxWidth="40%" width="auto">
@@ -187,6 +188,7 @@ const ProductCard = ({ product }) => {
               €{product.price}
             </Text>
 
+            {/* Show description inside the modal */}
             <Text fontSize="sm" color={textColor} mb={4}>
               {product.description}
             </Text>

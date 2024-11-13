@@ -1,3 +1,4 @@
+import React from "react";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from './contexts/authContext.jsx';
@@ -18,20 +19,20 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Box minH={"100vh"} display="flex" flexDirection="column"  bg={useColorModeValue("gray.100", "gray.900")}>
+        <Box minH="100vh" display="flex" flexDirection="column" bg={useColorModeValue("gray.100", "gray.900")}>
           <Navbar />
           <Box flex="1" display="flex" flexDirection="column">
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path='/create' element={<CreatePage />} />
-            <Route path='/admin' element={<AdminPage />} />
-            <Route path='/cart' element={<Cart />} />
-            <Route path='/checkout' element={<CheckoutPage />} />
-            <Route path='/contact' element={<ContactPage />} />
-            <Route path='/about' element={<AboutPage />} />
-          </Routes>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/create" element={<CreatePage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/about" element={<AboutPage />} />
+            </Routes>
           </Box>
           <Footer />
         </Box>

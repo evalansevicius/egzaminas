@@ -21,10 +21,15 @@ import {
   CloseIcon,
   SunIcon,
   MoonIcon,
-  PlusSquareIcon
+  PlusSquareIcon,
+  InfoIcon,
+  PhoneIcon,
+  AddIcon,
 } from "@chakra-ui/icons";
 import { AuthContext } from '../contexts/authContext';
 import { IoBagAddOutline } from "react-icons/io5";
+import { HiHome } from "react-icons/hi";
+import { AiOutlineLogin } from "react-icons/ai";
 
 const Navbar = () => {
   const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
@@ -68,17 +73,17 @@ const Navbar = () => {
         <HStack spacing={8} alignItems="center">
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             <Link to="/">
-              <Button variant="ghost" fontWeight="bold">Coffee Shop</Button>
+              <IconButton aria-label="Home" icon={<HiHome />} />
             </Link>
             <Link to="/about">
-              <Button variant="ghost">About</Button>
+              <IconButton aria-label="About" icon={<InfoIcon />} />
             </Link>
             <Link to="/contact">
-              <Button variant="ghost">Contact</Button>
+              <IconButton aria-label="Contact" icon={<PhoneIcon />} />
             </Link>
             {(role === 'admin' || role === 'superadmin') && (
               <Link to="/admin">
-                <Button variant="ghost">Admin Dashboard</Button>
+                <IconButton aria-label="Admin Dashboard" icon={<AddIcon />} />
               </Link>
             )}
           </HStack>
@@ -95,22 +100,22 @@ const Navbar = () => {
             </>
           ) : (
             <Link to="/login">
-              <Button colorScheme="teal" size="sm" mr={4}>
-                Sign In
-              </Button>
+              <IconButton 
+                colorScheme="teal" 
+                size="md" 
+                mr={4} 
+                icon={<AiOutlineLogin />} 
+                aria-label="Sign In"
+              />
             </Link>
           )}
           {(role === 'admin' || role === 'superadmin') && (
             <Link to="/create">
-              <Button mr={4} size="md">
-                <PlusSquareIcon fontSize={20} />
-              </Button>
+              <IconButton mr={4} size="md" icon={<PlusSquareIcon />} />
             </Link>
           )}
           <Link to="/cart">
-            <Button size="md">
-              <IoBagAddOutline fontSize={20} />
-            </Button>
+            <IconButton size="md" aria-label="Cart" icon={<IoBagAddOutline fontSize={20} />} />
           </Link>
           <IconButton
             fontSize={20}

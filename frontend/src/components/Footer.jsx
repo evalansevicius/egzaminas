@@ -1,62 +1,70 @@
-import { Box, Text, Stack, IconButton } from "@chakra-ui/react";
-import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import React from "react";
+import {
+  Box,
+  Container,
+  Text,
+  Stack,
+  IconButton,
+  useBreakpointValue,
+  useColorMode,
+  HStack,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { FaHome, FaInfoCircle, FaEnvelope } from "react-icons/fa";
 
 const Footer = () => {
+  const { colorMode } = useColorMode();
+  const footerBgColor = colorMode === "light" ? "gray.100" : "gray.800";
+  const iconColor = colorMode === "light" ? "black" : "white";
+  const textColor = colorMode === "light" ? "black" : "white";
+
   return (
-    <Box
-      as="footer"
-      position="relative"
-      width="100%"
-      bg="gray.800"
-      color="white"
-      py={4}
-      zIndex="1000" // Ensures the footer stays on top of other content if needed
-    >
-      <Stack direction={{ base: "column", md: "row" }} justify="space-between" align="center" px={4} spacing={4}>
-        {/* Left Side - Company Info */}
-        <Stack spacing={1} textAlign={{ base: "center", md: "left" }}>
-          <Text fontWeight="bold" fontSize="lg">
-            Coffee Shop
+    <Box bg={footerBgColor} color="white" py={10} mt="auto">
+      <Container maxW="container.xl">
+        <Stack
+          direction={useBreakpointValue({ base: "column", md: "row" })}
+          spacing={6}
+          justify="space-between"
+          align="center"
+        >
+          <HStack spacing={6}>
+            <Link to="/">
+              <IconButton
+                aria-label="Home"
+                icon={<FaHome />}
+                color={iconColor}
+                variant="link"
+                fontSize="lg"
+                _hover={{ textDecoration: "none" }}
+              />
+            </Link>
+            <Link to="/about">
+              <IconButton
+                aria-label="About"
+                icon={<FaInfoCircle />}
+                color={iconColor}
+                variant="link"
+                fontSize="lg"
+                _hover={{ textDecoration: "none" }}
+              />
+            </Link>
+            <Link to="/contact">
+              <IconButton
+                aria-label="Contact"
+                icon={<FaEnvelope />}
+                color={iconColor}
+                variant="link"
+                fontSize="lg"
+                _hover={{ textDecoration: "none" }}
+              />
+            </Link>
+          </HStack>
+
+          <Text fontSize="sm" textAlign="center" color={textColor} mt={4}>
+            © 2024 Coffee Shop. All Rights Reserved.
           </Text>
-          <Text fontSize="sm">© 2024 Coffee Shop. All rights reserved.</Text>
         </Stack>
-
-        {/* Middle - Links */}
-        <Stack direction="row" spacing={6} justify={{ base: "center", md: "center" }} align="center">
-          <Link to="/" style={{ textDecoration: "none", color: "white" }}>Home</Link>
-          <Link to="/about" style={{ textDecoration: "none", color: "white" }}>About</Link>
-          <Link to="/contact" style={{ textDecoration: "none", color: "white" }}>Contact</Link>
-        </Stack>
-
-        {/* Right Side - Social Media Icons */}
-        <Stack direction="row" spacing={4} justify={{ base: "center", md: "center" }} align="center">
-          <IconButton
-            as={Link}
-            href="#"
-            icon={<FaFacebook />}
-            bg="gray.700"
-            _hover={{ bg: "white", color: "gray.700" }}
-            isRound
-          />
-          <IconButton
-            as={Link}
-            href="#"
-            icon={<FaInstagram />}
-            bg="gray.700"
-            _hover={{ bg: "white", color: "gray.700" }}
-            isRound
-          />
-          <IconButton
-            as={Link}
-            href="#"
-            icon={<FaTwitter />}
-            bg="gray.700"
-            _hover={{ bg: "white", color: "gray.700" }}
-            isRound
-          />
-        </Stack>
-      </Stack>
+      </Container>
     </Box>
   );
 };

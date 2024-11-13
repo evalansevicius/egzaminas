@@ -16,11 +16,11 @@ const HomePage = () => {
         <Text
           fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
           fontWeight="bold"
-          bgGradient="linear(to-r, cyan.400, blue.500)"
+          bgGradient="linear(to-r, #D4AF37, #B77A29)"
           bgClip="text"
           textAlign="center"
         >
-          Current Products
+          Enjoy the Perfect Coffee
         </Text>
 
         {isLoading ? (
