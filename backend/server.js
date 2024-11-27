@@ -15,8 +15,11 @@ dotenv.config();
 const port = 8000;
 const app = express();
 
-// Connect to MongoDB without deprecated options
-mongoose.connect(process.env.MONGO_URL)
+// Connect to MongoDB using the updated MONGO_URL from .env
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true, // Ensures modern connection parsing
+    useUnifiedTopology: true, // Enables new server discovery and monitoring engine
+})
     .then(() => console.log('Database Connected'))
     .catch((err) => console.log('Database not connected', err));
 

@@ -1,9 +1,8 @@
-const ContactPage = () => {
-    return () => {
-        
-    }
-        
+// SomeComponent.jsx
 
-}
-
-export default ContactPage;
+const SomeComponent = () => {
+    return <p>This is SomeComponent</p>;
+  };
+  
+  export default SomeComponent; // Default export
+  

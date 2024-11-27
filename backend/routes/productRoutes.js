@@ -1,21 +1,28 @@
 import express from 'express';
-import { createProduct, deleteProduct, getProducts, updateProduct, incrementRating } from '../controllers/productController.js';
+import { 
+    createProduct, 
+    deleteProduct, 
+    getProducts, 
+    updateProduct, 
+    incrementRating 
+} from '../controllers/productController.js';
 import { isAdmin, requireAdminOrSuperadmin } from '../helpers/auth.js';
 
 const router = express.Router();
 
-// Route to get all products
-router.get("/", getProducts);
+// Get all products
+router.get('/products', getProducts);  // Change here to /products
 
-// Route to create a product
-router.post('/products',isAdmin, requireAdminOrSuperadmin, createProduct);
+// Create a product (requires admin or superadmin privileges)
+router.post('/products', isAdmin, requireAdminOrSuperadmin, createProduct);
 
-// Route to delete a product
-router.delete('/products/:productID',isAdmin, requireAdminOrSuperadmin, deleteProduct);
+// Delete a product (requires admin or superadmin privileges)
+router.delete('/products/:productID', isAdmin, requireAdminOrSuperadmin, deleteProduct);
 
-// Route to edit a product
-router.put("/products/:productID",isAdmin, requireAdminOrSuperadmin, updateProduct);
+// Update a product (requires admin or superadmin privileges)
+router.put('/products/:productID', isAdmin, requireAdminOrSuperadmin, updateProduct);
 
-// Route to increment rating
-router.patch("/products/:productID/incrementRating", incrementRating);
+// Increment product rating
+router.patch('/products/:productID/incrementRating', incrementRating);
+
 export default router;

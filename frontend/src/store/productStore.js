@@ -8,7 +8,7 @@ import {
 } from '../services/productService';
 
 export const useProductStore = create((set) => ({
-  products: [],
+  products: [], // Initialize products as an empty array
   setProducts: (products) => set({ products }),
 
   createProduct: async (newProduct) => {
@@ -28,9 +28,12 @@ export const useProductStore = create((set) => ({
   getProducts: async () => {
     try {
       const products = await getProductsAPI();
-      set({ products });
+      // Ensure products is always an array (even if the API returns null or undefined)
+      set({ products: Array.isArray(products) ? products : [] });
     } catch (error) {
       console.error("Error fetching products:", error);
+      // Set an empty array in case of error, so it doesn't break the UI
+      set({ products: [] });
     }
   },
 

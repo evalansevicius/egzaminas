@@ -61,7 +61,14 @@ const Navbar = () => {
   };
 
   return (
-    <Box bg={colorMode === "light" ? "gray.100" : "gray.800"} px={4}>
+    <Box 
+      bg={colorMode === "light" ? "gray.200" : "gray.700"} // Neutral background color for light and dark mode
+      px={4} 
+      position="sticky" 
+      top="0" 
+      zIndex="1000"
+      shadow="md" // Optional: Adds a shadow effect
+    >
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <IconButton
           size="md"

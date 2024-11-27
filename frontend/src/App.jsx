@@ -13,15 +13,30 @@ import Cart from './pages/Cart';
 import CheckoutPage from './pages/CheckoutPage'; 
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
-import Footer from "./components/Footer.jsx";
+import Footer from "./components/Footer.jsx";  // Ensure Footer is imported here
 
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Box minH="100vh" display="flex" flexDirection="column" bg={useColorModeValue("gray.100", "gray.900")}>
+        {/* Main layout container */}
+        <Box 
+          minH="100vh" 
+          display="flex" 
+          flexDirection="column" 
+          bg={useColorModeValue("gray.100", "gray.900")} 
+        >
+          {/* Navbar stays at the top */}
           <Navbar />
-          <Box flex="1" display="flex" flexDirection="column">
+          
+          {/* Main content area that takes up remaining space */}
+          <Box 
+            flex="1" 
+            display="flex" 
+            flexDirection="column" 
+            overflow="auto"
+          >
+            {/* Routing setup for the pages */}
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
@@ -34,6 +49,8 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
             </Routes>
           </Box>
+          
+          {/* Footer only rendered once at the bottom */}
           <Footer />
         </Box>
       </CartProvider>

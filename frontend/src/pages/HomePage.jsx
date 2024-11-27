@@ -1,20 +1,20 @@
-import { Container, SimpleGrid, Text, VStack, Spinner, Box } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useProductStore } from "../store/productStore";
-import ProductCard from "../components/ProductCard";
+import { useEffect } from 'react';
+import { Box, SimpleGrid, Text, VStack, Spinner, Alert, AlertIcon } from '@chakra-ui/react';
+import { useProductStore } from '../store/productStore'; // Ensure the store is correctly imported
+import ProductCard from '../components/ProductCard';
 
 const HomePage = () => {
-  const { getProducts, products, isLoading } = useProductStore();
+  const { getProducts, products = [], isLoading, isError } = useProductStore(); // Default to an empty array if products is not yet available
 
   useEffect(() => {
-    getProducts();
+    getProducts(); // Fetch products on component mount
   }, [getProducts]);
 
   return (
-    <Container maxW="container.2xl" py={12}>
-      <VStack spacing={8}>
+    <Box minHeight="100vh" display="flex" flexDirection="column">
+      <VStack spacing={8} align="center">
         <Text
-          fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
+          fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}
           fontWeight="bold"
           bgGradient="linear(to-r, #D4AF37, #B77A29)"
           bgClip="text"
@@ -23,10 +23,16 @@ const HomePage = () => {
           Enjoy the Perfect Coffee
         </Text>
 
+        {/* Error or Loading Spinner */}
         {isLoading ? (
           <Box textAlign="center">
             <Spinner size="lg" />
           </Box>
+        ) : isError ? (
+          <Alert status="error" textAlign="center">
+            <AlertIcon />
+            Failed to load products. Please try again later.
+          </Alert>
         ) : (
           <SimpleGrid
             columns={{
@@ -44,19 +50,14 @@ const HomePage = () => {
                 <ProductCard key={product.productID} product={product} />
               ))
             ) : (
-              <Text
-                fontSize="xl"
-                textAlign="center"
-                fontWeight="bold"
-                color="gray.500"
-              >
+              <Text fontSize="xl" textAlign="center" fontWeight="bold" color="gray.500">
                 No products found 😢
               </Text>
             )}
           </SimpleGrid>
         )}
       </VStack>
-    </Container>
+    </Box>
   );
 };
 

@@ -1,6 +1,4 @@
-
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   SimpleGrid,
@@ -8,20 +6,26 @@ import {
   VStack,
   Button,
   HStack,
-  useToast,
   Box,
-  Heading,
+  Input,
+  FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/productStore";
-import AdminCard from "../components/AdminCard";
+import AdminCard from "../components/AdminCard";  // Ensure this component has the Edit Button
 import OrdersDialog from "../components/OrdersDialog";
 import RoleDialog from "../components/RoleDialog";
-import { fetchOrders, changeUserRole } from "../services/adminService";
 import UsersDialog from "../components/UsersDialog";
-import { getUsers } from "../services/adminService";
+import { fetchOrders, changeUserRole, getUsers } from "../services/adminService";
+import { updateProductAPI } from "../services/productService";  // API call to update product
+
 const AdminPage = () => {
   const { getProducts, products } = useProductStore();
+  const [editableProduct, setEditableProduct] = useState(null);  // Store the product being edited
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [userID, setUserID] = useState("");
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
@@ -31,9 +35,48 @@ const AdminPage = () => {
   const toast = useToast();
 
   useEffect(() => {
-    getProducts();
+    getProducts();  // Fetch products on page load
   }, [getProducts]);
 
+  // Handle Edit button click - open the form with product details
+  const handleEditClick = (product) => {
+    setEditableProduct(product);
+    setName(product.name);
+    setDescription(product.description);
+    setPrice(product.price);
+  };
+
+  // Handle saving the updated product details
+  const handleSaveClick = async () => {
+    const updatedProduct = { name, description, price };
+    
+    try {
+      await updateProductAPI(editableProduct.productID, updatedProduct);  // API call to update product
+      toast({
+        title: "Product updated successfully!",
+        description: "The product details have been updated.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      setEditableProduct(null);  // Close the edit form
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update product.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // Handle canceling the edit
+  const handleCancelEdit = () => {
+    setEditableProduct(null);  // Close the edit form
+  };
+
+  // Open the Users dialog and fetch users
   const openUsersDialog = async () => {
     try {
       const fetchedUsers = await getUsers();
@@ -50,6 +93,7 @@ const AdminPage = () => {
     }
   };
 
+  // Open the Orders dialog and fetch orders
   const openOrdersDialog = async () => {
     try {
       const fetchedOrders = await fetchOrders();
@@ -66,6 +110,7 @@ const AdminPage = () => {
     }
   };
 
+  // Handle Role Change (Promote or Demote)
   const handleRoleChange = async (action) => {
     if (!userID) {
       toast({
@@ -103,28 +148,81 @@ const AdminPage = () => {
   return (
     <Container maxW="container.xl" py={12}>
       <VStack spacing={8}>
+        {/* Admin management buttons */}
         <HStack spacing={4}>
           <Button colorScheme="blue" onClick={openOrdersDialog}>Orders</Button>
           <Button colorScheme="purple" onClick={() => setIsRoleDialogOpen(true)}>Roles</Button>
           <Button colorScheme="yellow" onClick={openUsersDialog}>Users</Button>
         </HStack>
         
+        {/* Products title */}
         <Text fontSize="30" fontWeight="bold" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" textAlign="center">
           Current Products 🚀
         </Text>
 
+        {/* Product grid */}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} w="full">
           {products.map((product) => (
-            <AdminCard key={product.productID} product={product} />
+            <Box key={product.productID} border="1px" borderRadius="md" boxShadow="sm" p={4}>
+              {/* Display the product details or the edit form if editable */}
+              {editableProduct?.productID === product.productID ? (
+                // Edit form for the selected product
+                <Box>
+                  <FormLabel htmlFor="name">Name</FormLabel>
+                  <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    mb={4}
+                  />
+                  <FormLabel htmlFor="description">Description</FormLabel>
+                  <Input
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    mb={4}
+                  />
+                  <FormLabel htmlFor="price">Price</FormLabel>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    mb={4}
+                  />
+                  <HStack spacing={4} mt={4}>
+                    <Button colorScheme="green" onClick={handleSaveClick}>
+                      Save
+                    </Button>
+                    <Button colorScheme="red" onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                  </HStack>
+                </Box>
+              ) : (
+                // Regular product card with edit button
+                <AdminCard
+                  product={product}
+                  onEdit={() => handleEditClick(product)}  // Pass the product to be edited
+                />
+              )}
+            </Box>
           ))}
         </SimpleGrid>
 
+        {/* No products found message */}
         {products.length === 0 && (
           <Text fontSize="xl" textAlign="center" fontWeight="bold" color="gray.500">
-            No products found 😢 <Link to="/create"><Text as="span" color="blue.500" _hover={{ textDecoration: "underline" }}>Create a product</Text></Link>
+            No products found 😢{" "}
+            <Link to="/create">
+              <Text as="span" color="blue.500" _hover={{ textDecoration: "underline" }}>
+                Create a product
+              </Text>
+            </Link>
           </Text>
         )}
 
+        {/* Dialogs for orders, users, and role management */}
         <OrdersDialog isOpen={isOrdersDialogOpen} onClose={() => setIsOrdersDialogOpen(false)} orders={orders} />
         <UsersDialog isOpen={isUsersDialogOpen} onClose={() => setIsUsersDialogOpen(false)} users={users} />
         <RoleDialog
