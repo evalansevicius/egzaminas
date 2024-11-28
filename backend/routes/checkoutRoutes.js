@@ -1,6 +1,5 @@
-// routes/checkoutRoutes.js
 import express from 'express';
-import Order from '../models/Order.js'; // Make sure to create an Order model
+import Order from '../models/Order.js';
 const router = express.Router();
 
 router.post('/checkout', async (req, res) => {
@@ -8,9 +7,7 @@ router.post('/checkout', async (req, res) => {
     if (!userID) {
         return res.status(400).json({ success: false, message: 'UserID is required' });
     }
-    console.log("Received data:", req.body);
     try {
-        // Create a new order
         const order = new Order({ userID, name, items, totalPrice, shippingAddress: { street:shippingAddress.street, city:shippingAddress.city, zip:shippingAddress.zip, country:shippingAddress.country} });
         await order.save();
 

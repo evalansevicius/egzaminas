@@ -1,6 +1,6 @@
 import User from '../models/user.js'
 import Product from '../models/product.js';
-// Custom user ID 6 digit
+
 async function matchingUserID(id) {
   const existingUser = await User.findOne({ userID: id });
   return existingUser ? true : false;
@@ -16,8 +16,6 @@ async function generateUserID() {
   return id;
 }
 
-// custom product id 10 digit
-
 async function generateProductID(attempts = 0) {
   const id = Math.floor(1000000000 + Math.random() * 9000000000);
   if (attempts > 10) {
@@ -31,7 +29,6 @@ async function generateProductID(attempts = 0) {
 
   return id;
 }
-
 
 export {
   generateUserID,

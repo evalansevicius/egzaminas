@@ -1,4 +1,3 @@
-// CartContext.jsx
 import React, { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
@@ -6,7 +5,6 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  // Function to add items to the cart
   const addToCart = (product) => {
     setCart((prevCart) => {
       const existingProductIndex = prevCart.findIndex(item => item.productID === product.productID);
@@ -20,12 +18,10 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Function to remove an item from the cart
   const removeFromCart = (productID) => {
     setCart((prevCart) => prevCart.filter(item => item.productID !== productID));
   };
 
-  // Function to increase the quantity of a product
   const increaseQuantity = (productID) => {
     setCart((prevCart) => 
       prevCart.map(item => 
@@ -36,7 +32,6 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // Function to decrease the quantity of a product
   const decreaseQuantity = (productID) => {
     setCart((prevCart) => 
       prevCart.map(item => 
@@ -47,9 +42,8 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // Function to clear the cart after checkout
   const clearCart = () => {
-    setCart([]); // Clears the cart
+    setCart([]);
   };
 
   return (

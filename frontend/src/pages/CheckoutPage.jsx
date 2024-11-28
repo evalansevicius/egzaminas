@@ -13,7 +13,7 @@ import {
   Button,
   Input,
 } from "@chakra-ui/react";
-import { checkoutAPI } from "../services/checkoutService.js"; // Import the API function
+import { checkoutAPI } from "../services/checkoutService.js";
 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
@@ -26,10 +26,6 @@ const CheckoutPage = () => {
     zip: "",
     country: "",
   });
-
-  //const bgColor = useColorModeValue("gray.50", "gray.800");
- // const textColor = useColorModeValue("gray.800", "gray.100");
- // const totalPriceTextColor = useColorModeValue("black", "white");
 
   useEffect(() => {
     const storedUserID = localStorage.getItem("userID");
@@ -69,7 +65,7 @@ const CheckoutPage = () => {
     } 
 
     try {
-      const response = await checkoutAPI(orderData); // Use checkoutAPI here
+      const response = await checkoutAPI(orderData);
       if (response.success) {
         clearCart();
         setIsFormVisible(false);
@@ -112,7 +108,7 @@ const CheckoutPage = () => {
       alignItems="center"
       bg={colorMode === "light" ? "gray.100" : "gray.800"}
     >
-      <Heading as="h2" size="lg" mb={4} >
+      <Heading as="h2" size="lg" mb={4}>
         Checkout
       </Heading>
 

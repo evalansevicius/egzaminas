@@ -16,17 +16,17 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/productStore";
-import AdminCard from "../components/AdminCard"; // Ensure this component has the Edit Button
+import AdminCard from "../components/AdminCard";
 import OrdersDialog from "../components/OrdersDialog";
 import RoleDialog from "../components/RoleDialog";
 import UsersDialog from "../components/UsersDialog";
 import { fetchOrders, changeUserRole, getUsers } from "../services/adminService";
-import { updateProductAPI } from "../services/productService"; // API call to update product
-import { FaShoppingCart, FaUserShield, FaUsers } from "react-icons/fa"; // Icon imports
+import { updateProductAPI } from "../services/productService";
+import { FaShoppingCart, FaUserShield, FaUsers } from "react-icons/fa";
 
 const AdminPage = () => {
-  const { getProducts, products, isLoading, isError } = useProductStore(); // Assuming these are available in store
-  const [editableProduct, setEditableProduct] = useState(null); // Store the product being edited
+  const { getProducts, products, isLoading, isError } = useProductStore();
+  const [editableProduct, setEditableProduct] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -39,10 +39,9 @@ const AdminPage = () => {
   const toast = useToast();
 
   useEffect(() => {
-    getProducts(); // Fetch products on page load
+    getProducts();
   }, [getProducts]);
 
-  // Handle Edit button click - open the form with product details
   const handleEditClick = (product) => {
     setEditableProduct(product);
     setName(product.name);
@@ -50,12 +49,11 @@ const AdminPage = () => {
     setPrice(product.price);
   };
 
-  // Handle saving the updated product details
   const handleSaveClick = async () => {
     const updatedProduct = { name, description, price };
 
     try {
-      await updateProductAPI(editableProduct.productID, updatedProduct); // API call to update product
+      await updateProductAPI(editableProduct.productID, updatedProduct);
       toast({
         title: "Product updated successfully!",
         description: "The product details have been updated.",
@@ -63,7 +61,7 @@ const AdminPage = () => {
         duration: 5000,
         isClosable: true,
       });
-      setEditableProduct(null); // Close the edit form
+      setEditableProduct(null);
     } catch (error) {
       toast({
         title: "Error",
@@ -75,12 +73,10 @@ const AdminPage = () => {
     }
   };
 
-  // Handle canceling the edit
   const handleCancelEdit = () => {
-    setEditableProduct(null); // Close the edit form
+    setEditableProduct(null);
   };
 
-  // Open the Users dialog and fetch users
   const openUsersDialog = async () => {
     try {
       const fetchedUsers = await getUsers();
@@ -97,7 +93,6 @@ const AdminPage = () => {
     }
   };
 
-  // Open the Orders dialog and fetch orders
   const openOrdersDialog = async () => {
     try {
       const fetchedOrders = await fetchOrders();
@@ -114,7 +109,6 @@ const AdminPage = () => {
     }
   };
 
-  // Handle Role Change (Promote or Demote)
   const handleRoleChange = async (action) => {
     if (!userID) {
       toast({
@@ -152,7 +146,6 @@ const AdminPage = () => {
   return (
     <Container maxW="container.xl" py={12}>
       <VStack spacing={8}>
-        {/* Admin management buttons */}
         <HStack spacing={6} w="full" justify="center" wrap="wrap">
           <Button
             colorScheme="teal"
@@ -206,12 +199,10 @@ const AdminPage = () => {
 
         <Divider my={6} borderColor="gray.300" />
 
-        {/* Products title */}
         <Text fontSize="3xl" fontWeight="bold" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" textAlign="center">
           Current Products 🚀
         </Text>
 
-        {/* Product grid */}
         {isLoading ? (
           <Spinner size="xl" />
         ) : (
@@ -227,9 +218,7 @@ const AdminPage = () => {
                 transition="all 0.2s"
                 _hover={{ transform: "scale(1.05)", boxShadow: "lg" }}
               >
-                {/* Display the product details or the edit form if editable */}
                 {editableProduct?.productID === product.productID ? (
-                  // Edit form for the selected product
                   <Box>
                     <FormLabel htmlFor="name">Name</FormLabel>
                     <Input
@@ -263,10 +252,9 @@ const AdminPage = () => {
                     </HStack>
                   </Box>
                 ) : (
-                  // Regular product card with edit button
                   <AdminCard
                     product={product}
-                    onEdit={() => handleEditClick(product)} // Pass the product to be edited
+                    onEdit={() => handleEditClick(product)}
                   />
                 )}
               </Box>
@@ -274,7 +262,6 @@ const AdminPage = () => {
           </SimpleGrid>
         )}
 
-        {/* No products found message */}
         {products.length === 0 && !isLoading && (
           <Text fontSize="xl" textAlign="center" fontWeight="bold" color="gray.500">
             No products found 😢{" "}
@@ -286,7 +273,6 @@ const AdminPage = () => {
           </Text>
         )}
 
-        {/* Dialogs for orders, users, and role management */}
         <OrdersDialog isOpen={isOrdersDialogOpen} onClose={() => setIsOrdersDialogOpen(false)} orders={orders} />
         <UsersDialog isOpen={isUsersDialogOpen} onClose={() => setIsUsersDialogOpen(false)} users={users} />
         <RoleDialog

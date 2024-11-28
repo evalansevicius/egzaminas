@@ -1,24 +1,20 @@
 import React, { useState, useContext, useCallback } from "react";
 import { Box, Button, Heading, HStack, IconButton, Image, Text, useColorModeValue, useToast, useDisclosure, VStack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { IoBagAddOutline, IoStar } from "react-icons/io5";
-import { useCart } from "../contexts/CartContext"; // Assuming this context is defined elsewhere
-import { useProductStore } from "../store/productStore"; // Assuming this store exists
-import { AuthContext } from "../contexts/authContext"; // Assuming AuthContext is defined
+import { useCart } from "../contexts/CartContext";
+import { useProductStore } from "../store/productStore";
+import { AuthContext } from "../contexts/authContext";
 
 const ProductCard = ({ product }) => {
   const { name, price, image, description, productID } = product;
-
-  // Theme-based color values using Chakra's hook
   const textColor = useColorModeValue("gray.600", "gray.200");
   const bg = useColorModeValue("white", "gray.800");
 
-  // Contexts and hooks
   const { addToCart } = useCart();
   const incrementRating = useProductStore((state) => state.incrementRating);
   const toast = useToast();
   const { isLoggedIn } = useContext(AuthContext);
 
-  // Local state for rating and checked status
   const [rating, setRating] = useState(product.rating || 0);
   const [hasRated, setHasRated] = useState(() => {
     const ratedProducts = JSON.parse(localStorage.getItem("ratedProducts")) || [];
@@ -27,7 +23,6 @@ const ProductCard = ({ product }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Handle toggling rating
   const handleToggleRating = useCallback(async () => {
     if (!isLoggedIn) {
       toast({
@@ -50,7 +45,6 @@ const ProductCard = ({ product }) => {
         setRating(newRating);
         setHasRated(!alreadyRated);
 
-        // Update localStorage for rated products
         if (!alreadyRated) {
           ratedProducts.push(productID);
           localStorage.setItem("ratedProducts", JSON.stringify(ratedProducts));
@@ -84,7 +78,6 @@ const ProductCard = ({ product }) => {
     }
   }, [productID, isLoggedIn, incrementRating, toast, name]);
 
-  // Add product to cart
   const handleAddToCart = useCallback(() => {
     addToCart(product);
     toast({
@@ -146,7 +139,6 @@ const ProductCard = ({ product }) => {
         </VStack>
       </Box>
 
-      {/* Modal for full product details */}
       <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
         <ModalOverlay />
         <ModalContent maxWidth="40%" width="auto">

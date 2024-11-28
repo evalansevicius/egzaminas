@@ -25,13 +25,11 @@ const Cart = () => {
   const { colorMode } = useColorMode();
   const toast = useToast();
 
-  // Recalculate total price whenever cart changes
   const totalPrice = cart.reduce(
     (acc, product) => acc + product.price * product.quantity,
     0
   );
 
-  // Handle checkout
   const handleCheckout = () => {
     if (!isLoggedIn) {
       toast({
@@ -41,7 +39,7 @@ const Cart = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate('/login');  // Redirect to login page
+      navigate('/login');
       return;
     }
 
@@ -58,7 +56,6 @@ const Cart = () => {
     }
   };
 
-  // Toast when not logged in (on component mount)
   useEffect(() => {
     if (!isLoggedIn) {
       toast({
@@ -68,7 +65,7 @@ const Cart = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate('/login'); // Redirect user to login if they are not logged in
+      navigate('/login');
     }
   }, [isLoggedIn, navigate, toast]);
 
