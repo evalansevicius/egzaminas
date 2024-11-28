@@ -2,15 +2,16 @@ import React from "react";
 import { Box, Container, Text, Stack, IconButton, HStack, useColorModeValue } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { FaHome, FaInfoCircle, FaEnvelope } from "react-icons/fa";
+import { useColorMode } from "@chakra-ui/react";
 
 const Footer = () => {
-  // Dynamically change colors based on color mode (light/dark)
-  const bgColor = useColorModeValue("gray.200", "gray.800");  // Footer background
-  const textColor = useColorModeValue("black", "white");  // Text color for light/dark mode
-  const iconColor = useColorModeValue("gray.600", "white");  // Icon color for light/dark mode
+  const bgColor = useColorModeValue("gray.200", "gray.800");
+  const textColor = useColorModeValue("black", "white");
+  const iconColor = useColorModeValue("gray.600", "white");
+  const { colorMode } = useColorMode();
 
   return (
-    <Box bg={bgColor} color={textColor} py={6}>
+    <Box bg={bgColor} color={textColor} py={6} position="sticky" bottom="0" zIndex="1000">
       <Container maxW="container.xl">
         <Stack
           direction={{ base: "column", md: "row" }}
@@ -25,8 +26,8 @@ const Footer = () => {
                 icon={<FaHome />}
                 variant="link"
                 fontSize="lg"
-                color={iconColor}  // Set the icon color dynamically
-                _hover={{ textDecoration: "none", color: "teal.500" }}  // Hover effect for icons
+                color={iconColor}
+                _hover={{ textDecoration: "none", color: "teal.500" }}
               />
             </Link>
             <Link to="/about">
@@ -35,8 +36,8 @@ const Footer = () => {
                 icon={<FaInfoCircle />}
                 variant="link"
                 fontSize="lg"
-                color={iconColor}  // Set the icon color dynamically
-                _hover={{ textDecoration: "none", color: "teal.500" }}  // Hover effect for icons
+                color={iconColor}
+                _hover={{ textDecoration: "none", color: "teal.500" }}
               />
             </Link>
             <Link to="/contact">
@@ -45,14 +46,14 @@ const Footer = () => {
                 icon={<FaEnvelope />}
                 variant="link"
                 fontSize="lg"
-                color={iconColor}  // Set the icon color dynamically
-                _hover={{ textDecoration: "none", color: "teal.500" }}  // Hover effect for icons
+                color={iconColor}
+                _hover={{ textDecoration: "none", color: "teal.500" }}
               />
             </Link>
           </HStack>
 
           <Text fontSize="sm" textAlign="center" mt={4}>
-            © 2024 Coffee Shop. All Rights Reserved.
+            © 2024 Edgaro egzamino darbas.
           </Text>
         </Stack>
       </Container>

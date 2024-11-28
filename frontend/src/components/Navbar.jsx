@@ -1,13 +1,14 @@
-import React, { useEffect, useContext, useRef } from 'react';
+import React, { useEffect, useContext, useRef } from "react";
 import {
   Box,
   Flex,
   HStack,
-  IconButton,
+  Button,
   useDisclosure,
   Stack,
-  Button,
   useColorMode,
+  Text,
+  Link as ChakraLink,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -16,23 +17,22 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  HamburgerIcon,
-  CloseIcon,
-  SunIcon,
-  MoonIcon,
-  PlusSquareIcon,
-  InfoIcon,
-  PhoneIcon,
-  AddIcon,
-} from "@chakra-ui/icons";
-import { AuthContext } from '../contexts/authContext';
-import { IoBagAddOutline } from "react-icons/io5";
-import { HiHome } from "react-icons/hi";
-import { AiOutlineLogin } from "react-icons/ai";
+import { AuthContext } from "../contexts/authContext";
 
 const Navbar = () => {
-  const { isLoggedIn, setIsLoggedIn, role, setRole, name, setName, handleLogout, storedRole, storedName, token } = useContext(AuthContext);  
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    role,
+    setRole,
+    name,
+    setName,
+    handleLogout,
+    storedRole,
+    storedName,
+    token,
+  } = useContext(AuthContext);
+
   const navigate = useNavigate();
   const cancelRef = useRef();
   const menuDisclosure = useDisclosure();
@@ -42,8 +42,8 @@ const Navbar = () => {
   useEffect(() => {
     if (token) {
       setIsLoggedIn(true);
-      if (storedRole === 'user') {
-        setRole(null); 
+      if (storedRole === "user") {
+        setRole(null);
         setName(storedName);
       } else {
         setRole(storedRole);
@@ -61,88 +61,130 @@ const Navbar = () => {
   };
 
   return (
-    <Box 
-      bg={colorMode === "light" ? "gray.200" : "gray.700"} // Neutral background color for light and dark mode
-      px={4} 
-      position="sticky" 
-      top="0" 
+    <Box
+      bg={colorMode === "light" ? "gray.100" : "gray.800"}
+      px={4}
+      position="sticky"
+      top="0"
       zIndex="1000"
-      shadow="md" // Optional: Adds a shadow effect
+      shadow="md"
     >
       <Flex h={16} alignItems="center" justifyContent="space-between">
-        <IconButton
-          size="md"
-          icon={menuDisclosure.isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label="Open Menu"
+        <Button
+          size="lg"
           display={{ md: "none" }}
           onClick={menuDisclosure.onToggle}
-        />
+          variant="ghost"
+          aria-label="Toggle Menu"
+        >
+          {menuDisclosure.isOpen ? "Close Menu" : "Open Menu"}
+        </Button>
+
         <HStack spacing={8} alignItems="center">
-          <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
+          <HStack as="nav" spacing={6} display={{ base: "none", md: "flex" }}>
             <Link to="/">
-              <IconButton aria-label="Home" icon={<HiHome />} />
+              <Button variant="link" colorScheme="teal" _hover={{ textDecoration: "underline" }}>
+                Home
+              </Button>
             </Link>
             <Link to="/about">
-              <IconButton aria-label="About" icon={<InfoIcon />} />
+              <Button variant="link" colorScheme="teal" _hover={{ textDecoration: "underline" }}>
+                About
+              </Button>
             </Link>
             <Link to="/contact">
-              <IconButton aria-label="Contact" icon={<PhoneIcon />} />
+              <Button variant="link" colorScheme="teal" _hover={{ textDecoration: "underline" }}>
+                Contact
+              </Button>
             </Link>
-            {(role === 'admin' || role === 'superadmin') && (
+            {(role === "admin" || role === "superadmin") && (
               <Link to="/admin">
-                <IconButton aria-label="Admin Dashboard" icon={<AddIcon />} />
+                <Button variant="link" colorScheme="teal" _hover={{ textDecoration: "underline" }}>
+                  Admin Dashboard
+                </Button>
               </Link>
             )}
           </HStack>
         </HStack>
+
         <Flex alignItems="center">
           {isLoggedIn ? (
             <>
               {name && (
-                <span>{`Welcome, ${name} ${role === 'superadmin' ? '(Superadmin)' : role === 'admin' ? '(Admin)' : ''}`}</span>
+                <Text mr={4} fontWeight="bold">
+                  {`Hello, ${name} ${
+                    role === "superadmin"
+                      ? "(Superadmin)"
+                      : role === "admin"
+                      ? "(Admin)"
+                      : ""
+                  }`}
+                </Text>
               )}
-              <Button colorScheme="teal" size="sm" mr={4} ml={4} onClick={confirmLogout}>
+              <Button colorScheme="teal" size="sm" mr={4} onClick={confirmLogout}>
                 Logout
               </Button>
             </>
           ) : (
             <Link to="/login">
-              <IconButton 
-                colorScheme="teal" 
-                size="md" 
-                mr={4} 
-                icon={<AiOutlineLogin />} 
-                aria-label="Sign In"
-              />
+              <Button colorScheme="teal" size="sm" mr={4}>
+                Sign In
+              </Button>
             </Link>
           )}
-          {(role === 'admin' || role === 'superadmin') && (
+          {(role === "admin" || role === "superadmin") && (
             <Link to="/create">
-              <IconButton mr={4} size="md" icon={<PlusSquareIcon />} />
+              <Button variant="outline" colorScheme="teal" mr={4}>
+                Create Product
+              </Button>
             </Link>
           )}
           <Link to="/cart">
-            <IconButton size="md" aria-label="Cart" icon={<IoBagAddOutline fontSize={20} />} />
+            <Button variant="ghost" size="md" colorScheme="teal">
+              Cart
+            </Button>
           </Link>
-          <IconButton
-            fontSize={20}
+          <Button
+            fontSize="lg"
             ml={4}
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-            aria-label="Toggle Color Mode"
+            variant="ghost"
             onClick={toggleColorMode}
-          />
+            aria-label="Toggle Color Mode"
+          >
+            {colorMode === "light" ? "🌙" : "☀️"}
+          </Button>
         </Flex>
       </Flex>
+
       {menuDisclosure.isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
-            <Link to="/">Home</Link>
-            <Link to="/products">Products</Link>
-            <Link to="/about">About</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/">
+              <Button variant="link" colorScheme="teal">
+                Home
+              </Button>
+            </Link>
+            <Link to="/about">
+              <Button variant="link" colorScheme="teal">
+                About
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="link" colorScheme="teal">
+                Contact
+              </Button>
+            </Link>
+            {role && (
+              <Link to="/admin">
+                <Button variant="link" colorScheme="teal">
+                  Admin Dashboard
+                </Button>
+              </Link>
+            )}
           </Stack>
         </Box>
       ) : null}
+
       <AlertDialog
         isOpen={logoutDialogDisclosure.isOpen}
         leastDestructiveRef={cancelRef}
@@ -153,9 +195,7 @@ const Navbar = () => {
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Confirm Logout
             </AlertDialogHeader>
-            <AlertDialogBody>
-              Are you sure you want to log out?
-            </AlertDialogBody>
+            <AlertDialogBody>Are you sure you want to log out?</AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={logoutDialogDisclosure.onClose}>
                 Cancel

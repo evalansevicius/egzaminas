@@ -10,19 +10,22 @@ import {
   Input,
   FormLabel,
   useToast,
+  Divider,
+  Icon,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/productStore";
-import AdminCard from "../components/AdminCard";  // Ensure this component has the Edit Button
+import AdminCard from "../components/AdminCard"; // Ensure this component has the Edit Button
 import OrdersDialog from "../components/OrdersDialog";
 import RoleDialog from "../components/RoleDialog";
 import UsersDialog from "../components/UsersDialog";
 import { fetchOrders, changeUserRole, getUsers } from "../services/adminService";
-import { updateProductAPI } from "../services/productService";  // API call to update product
+import { updateProductAPI } from "../services/productService"; // API call to update product
+import { FaShoppingCart, FaUserShield, FaUsers } from "react-icons/fa"; // Icon imports
 
 const AdminPage = () => {
   const { getProducts, products } = useProductStore();
-  const [editableProduct, setEditableProduct] = useState(null);  // Store the product being edited
+  const [editableProduct, setEditableProduct] = useState(null); // Store the product being edited
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -35,7 +38,7 @@ const AdminPage = () => {
   const toast = useToast();
 
   useEffect(() => {
-    getProducts();  // Fetch products on page load
+    getProducts(); // Fetch products on page load
   }, [getProducts]);
 
   // Handle Edit button click - open the form with product details
@@ -49,9 +52,9 @@ const AdminPage = () => {
   // Handle saving the updated product details
   const handleSaveClick = async () => {
     const updatedProduct = { name, description, price };
-    
+
     try {
-      await updateProductAPI(editableProduct.productID, updatedProduct);  // API call to update product
+      await updateProductAPI(editableProduct.productID, updatedProduct); // API call to update product
       toast({
         title: "Product updated successfully!",
         description: "The product details have been updated.",
@@ -59,7 +62,7 @@ const AdminPage = () => {
         duration: 5000,
         isClosable: true,
       });
-      setEditableProduct(null);  // Close the edit form
+      setEditableProduct(null); // Close the edit form
     } catch (error) {
       toast({
         title: "Error",
@@ -73,7 +76,7 @@ const AdminPage = () => {
 
   // Handle canceling the edit
   const handleCancelEdit = () => {
-    setEditableProduct(null);  // Close the edit form
+    setEditableProduct(null); // Close the edit form
   };
 
   // Open the Users dialog and fetch users
@@ -149,21 +152,77 @@ const AdminPage = () => {
     <Container maxW="container.xl" py={12}>
       <VStack spacing={8}>
         {/* Admin management buttons */}
-        <HStack spacing={4}>
-          <Button colorScheme="blue" onClick={openOrdersDialog}>Orders</Button>
-          <Button colorScheme="purple" onClick={() => setIsRoleDialogOpen(true)}>Roles</Button>
-          <Button colorScheme="yellow" onClick={openUsersDialog}>Users</Button>
+        <HStack spacing={6} w="full" justify="center" wrap="wrap">
+          <Button
+            colorScheme="teal"
+            onClick={openOrdersDialog}
+            size="lg"
+            variant="solid"
+            borderRadius="full"
+            leftIcon={<Icon as={FaShoppingCart} />}
+            _hover={{
+              bg: "teal.500",
+              transform: "scale(1.05)",
+              boxShadow: "lg",
+            }}
+            transition="all 0.2s ease"
+          >
+            Orders
+          </Button>
+          <Button
+            colorScheme="orange"
+            onClick={() => setIsRoleDialogOpen(true)}
+            size="lg"
+            variant="solid"
+            borderRadius="full"
+            leftIcon={<Icon as={FaUserShield} />}
+            _hover={{
+              bg: "orange.400",
+              transform: "scale(1.05)",
+              boxShadow: "lg",
+            }}
+            transition="all 0.2s ease"
+          >
+            Roles
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={openUsersDialog}
+            size="lg"
+            variant="solid"
+            borderRadius="full"
+            leftIcon={<Icon as={FaUsers} />}
+            _hover={{
+              bg: "blue.400",
+              transform: "scale(1.05)",
+              boxShadow: "lg",
+            }}
+            transition="all 0.2s ease"
+          >
+            Users
+          </Button>
         </HStack>
-        
+
+        <Divider my={6} borderColor="gray.300" />
+
         {/* Products title */}
-        <Text fontSize="30" fontWeight="bold" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" textAlign="center">
+        <Text fontSize="3xl" fontWeight="bold" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" textAlign="center">
           Current Products 🚀
         </Text>
 
         {/* Product grid */}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} w="full">
           {products.map((product) => (
-            <Box key={product.productID} border="1px" borderRadius="md" boxShadow="sm" p={4}>
+            <Box
+              key={product.productID}
+              border="1px"
+              borderRadius="md"
+              boxShadow="sm"
+              p={6}
+              bg="white"
+              transition="all 0.2s"
+              _hover={{ transform: "scale(1.05)", boxShadow: "lg" }}
+            >
               {/* Display the product details or the edit form if editable */}
               {editableProduct?.productID === product.productID ? (
                 // Edit form for the selected product
@@ -191,10 +250,10 @@ const AdminPage = () => {
                     mb={4}
                   />
                   <HStack spacing={4} mt={4}>
-                    <Button colorScheme="green" onClick={handleSaveClick}>
+                    <Button colorScheme="green" onClick={handleSaveClick} size="md">
                       Save
                     </Button>
-                    <Button colorScheme="red" onClick={handleCancelEdit}>
+                    <Button colorScheme="red" onClick={handleCancelEdit} size="md">
                       Cancel
                     </Button>
                   </HStack>
@@ -203,7 +262,7 @@ const AdminPage = () => {
                 // Regular product card with edit button
                 <AdminCard
                   product={product}
-                  onEdit={() => handleEditClick(product)}  // Pass the product to be edited
+                  onEdit={() => handleEditClick(product)} // Pass the product to be edited
                 />
               )}
             </Box>
