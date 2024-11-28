@@ -12,6 +12,7 @@ import {
   useToast,
   Divider,
   Icon,
+  Spinner,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/productStore";
@@ -24,7 +25,7 @@ import { updateProductAPI } from "../services/productService"; // API call to up
 import { FaShoppingCart, FaUserShield, FaUsers } from "react-icons/fa"; // Icon imports
 
 const AdminPage = () => {
-  const { getProducts, products } = useProductStore();
+  const { getProducts, products, isLoading, isError } = useProductStore(); // Assuming these are available in store
   const [editableProduct, setEditableProduct] = useState(null); // Store the product being edited
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -211,66 +212,70 @@ const AdminPage = () => {
         </Text>
 
         {/* Product grid */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} w="full">
-          {products.map((product) => (
-            <Box
-              key={product.productID}
-              border="1px"
-              borderRadius="md"
-              boxShadow="sm"
-              p={6}
-              bg="white"
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.05)", boxShadow: "lg" }}
-            >
-              {/* Display the product details or the edit form if editable */}
-              {editableProduct?.productID === product.productID ? (
-                // Edit form for the selected product
-                <Box>
-                  <FormLabel htmlFor="name">Name</FormLabel>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    mb={4}
+        {isLoading ? (
+          <Spinner size="xl" />
+        ) : (
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} w="full">
+            {products.map((product) => (
+              <Box
+                key={product.productID}
+                border="1px"
+                borderRadius="md"
+                boxShadow="sm"
+                p={6}
+                bg="white"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.05)", boxShadow: "lg" }}
+              >
+                {/* Display the product details or the edit form if editable */}
+                {editableProduct?.productID === product.productID ? (
+                  // Edit form for the selected product
+                  <Box>
+                    <FormLabel htmlFor="name">Name</FormLabel>
+                    <Input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      mb={4}
+                    />
+                    <FormLabel htmlFor="description">Description</FormLabel>
+                    <Input
+                      id="description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      mb={4}
+                    />
+                    <FormLabel htmlFor="price">Price</FormLabel>
+                    <Input
+                      id="price"
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      mb={4}
+                    />
+                    <HStack spacing={4} mt={4}>
+                      <Button colorScheme="green" onClick={handleSaveClick} size="md">
+                        Save
+                      </Button>
+                      <Button colorScheme="red" onClick={handleCancelEdit} size="md">
+                        Cancel
+                      </Button>
+                    </HStack>
+                  </Box>
+                ) : (
+                  // Regular product card with edit button
+                  <AdminCard
+                    product={product}
+                    onEdit={() => handleEditClick(product)} // Pass the product to be edited
                   />
-                  <FormLabel htmlFor="description">Description</FormLabel>
-                  <Input
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    mb={4}
-                  />
-                  <FormLabel htmlFor="price">Price</FormLabel>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    mb={4}
-                  />
-                  <HStack spacing={4} mt={4}>
-                    <Button colorScheme="green" onClick={handleSaveClick} size="md">
-                      Save
-                    </Button>
-                    <Button colorScheme="red" onClick={handleCancelEdit} size="md">
-                      Cancel
-                    </Button>
-                  </HStack>
-                </Box>
-              ) : (
-                // Regular product card with edit button
-                <AdminCard
-                  product={product}
-                  onEdit={() => handleEditClick(product)} // Pass the product to be edited
-                />
-              )}
-            </Box>
-          ))}
-        </SimpleGrid>
+                )}
+              </Box>
+            ))}
+          </SimpleGrid>
+        )}
 
         {/* No products found message */}
-        {products.length === 0 && (
+        {products.length === 0 && !isLoading && (
           <Text fontSize="xl" textAlign="center" fontWeight="bold" color="gray.500">
             No products found 😢{" "}
             <Link to="/create">

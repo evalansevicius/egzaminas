@@ -25,6 +25,9 @@ const OrdersDialog = ({ isOpen, onClose, orders }) => {
     return "€0.00";
   };
 
+  // Sort orders by creation date (newest first)
+  const sortedOrders = orders.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   return (
     <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
       <AlertDialogOverlay>
@@ -41,11 +44,11 @@ const OrdersDialog = ({ isOpen, onClose, orders }) => {
           </Box>
 
           <AlertDialogBody pt={4}>
-            {orders.length === 0 ? (
+            {sortedOrders.length === 0 ? (
               <Text>No completed orders found.</Text>
             ) : (
               <VStack spacing={4}>
-                {orders.map((order) => (
+                {sortedOrders.map((order) => (
                   <Box key={order._id} p={5} shadow="md" borderWidth="1px" w="full">
                     <Heading fontSize="xl">Order ID: {order._id}</Heading>
                     <Text>UserID: {order.userID}</Text>

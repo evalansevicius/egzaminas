@@ -1,28 +1,43 @@
 import React, { useEffect } from 'react';
-import { Box, Text, Stack, useColorMode, IconButton, Heading, VStack, HStack, Button, Image, useToast, useColorModeValue } from '@chakra-ui/react';
+import {
+  Box,
+  Text,
+  Stack,
+  useColorMode,
+  IconButton,
+  Heading,
+  VStack,
+  HStack,
+  Button,
+  Image,
+  useToast,
+  useColorModeValue
+} from '@chakra-ui/react';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';  // Import the useAuth hook
+import { useAuth } from '../contexts/authContext';
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
-  const { isLoggedIn, handleLogout } = useAuth(); // Get authentication state
+  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const toast = useToast();
 
+  // Recalculate total price whenever cart changes
   const totalPrice = cart.reduce(
     (acc, product) => acc + product.price * product.quantity,
     0
   );
 
+  // Handle checkout
   const handleCheckout = () => {
     if (!isLoggedIn) {
       toast({
-        title: "You need to be logged in.",
-        description: "Please log in to proceed with the checkout.",
-        status: "warning",
+        title: 'You need to be logged in.',
+        description: 'Please log in to proceed with the checkout.',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
@@ -32,9 +47,9 @@ const Cart = () => {
 
     if (cart.length === 0) {
       toast({
-        title: "Cart is empty.",
-        description: "You need to add items to your cart before checkout.",
-        status: "warning",
+        title: 'Cart is empty.',
+        description: 'You need to add items to your cart before checkout.',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
@@ -43,15 +58,13 @@ const Cart = () => {
     }
   };
 
-  const footerBgColor = useColorModeValue('white', 'gray.800');
-  const footerTextColor = useColorModeValue('gray.800', 'white');
-
+  // Toast when not logged in (on component mount)
   useEffect(() => {
     if (!isLoggedIn) {
       toast({
-        title: "Not logged in",
-        description: "You need to log in to view your cart.",
-        status: "warning",
+        title: 'Not logged in',
+        description: 'You need to log in to view your cart.',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
@@ -59,22 +72,16 @@ const Cart = () => {
     }
   }, [isLoggedIn, navigate, toast]);
 
+  const footerBgColor = useColorModeValue('white', 'gray.800');
+  const footerTextColor = useColorModeValue('gray.800', 'white');
+
   return (
-    <Box
-      p={4}
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-    >
+    <Box p={4} display="flex" flexDirection="column" minHeight="100vh">
       <Heading as="h2" size="lg" mb={4}>
         Your Cart
       </Heading>
 
-      <Box
-        flex="1"
-        overflowY="auto"
-        mb={6}
-      >
+      <Box flex="1" overflowY="auto" mb={6}>
         {cart.length === 0 ? (
           <Text textAlign="center" fontSize="lg" color="gray.600">
             Your cart is empty.
@@ -88,7 +95,7 @@ const Cart = () => {
                 borderRadius="lg"
                 p={4}
                 mb={4}
-                bg={colorMode === "light" ? "gray.100" : "gray.800"}
+                bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
                 boxShadow="sm"
               >
                 <HStack align="start" spacing={6} justify="space-between">
@@ -100,10 +107,10 @@ const Cart = () => {
                   />
 
                   <VStack align="start" spacing={2} flex="1">
-                    <Text fontWeight="bold" fontSize="md" >{product.name}</Text>
-                    <Text fontSize="sm">
-                      Price: €{product.price.toFixed(2)}
+                    <Text fontWeight="bold" fontSize="md">
+                      {product.name}
                     </Text>
+                    <Text fontSize="sm">Price: €{product.price.toFixed(2)}</Text>
                     <Text fontSize="sm" noOfLines={2}>
                       Description: {product.description}
                     </Text>
@@ -113,7 +120,6 @@ const Cart = () => {
                         colorScheme="blue"
                         onClick={() => increaseQuantity(product.productID)}
                         size="sm"
-
                       >
                         +
                       </Button>

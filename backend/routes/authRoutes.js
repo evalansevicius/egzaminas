@@ -9,9 +9,11 @@ router.get('/', (req, res) => {
 });
 
 // Route to register a new user
+// It's important to validate inputs before attempting registration
 router.post('/register', registerUser);
 
 // Route to log in a user
+// Validating login credentials and generating JWT
 router.post('/login', loginUser);
 
 export default router;
