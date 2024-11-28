@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   SimpleGrid,
@@ -10,16 +10,33 @@ import {
   Image,
   Heading,
   Button,
+  Input,
+  IconButton,
+  Flex,
 } from "@chakra-ui/react";
 import { useProductStore } from "../store/productStore";
 import ProductCard from "../components/ProductCard";
+import { SearchIcon } from "@chakra-ui/icons";
 
 const HomePage = () => {
   const { getProducts, products = [], isLoading, isError } = useProductStore();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     getProducts();
   }, [getProducts]);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = products.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [searchQuery, products]);
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column">
@@ -54,6 +71,30 @@ const HomePage = () => {
             Shop Now
           </Button>
         </VStack>
+      </Box>
+
+      {/* Search Bar */}
+      <Box px={8} mb={8} textAlign="center">
+        <Flex justify="center" align="center">
+          <Input
+            placeholder="Search for products..."
+            size="md"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            borderColor="teal.500"
+            focusBorderColor="teal.300"
+            bg="white"
+            maxW="500px"
+            mr={2}
+          />
+          <IconButton
+            aria-label="Search"
+            icon={<SearchIcon />}
+            colorScheme="teal"
+            size="sm" // Smaller button size
+            onClick={() => setSearchQuery(searchQuery)}
+          />
+        </Flex>
       </Box>
 
       {/* Main Content */}
@@ -95,8 +136,8 @@ const HomePage = () => {
             w="full"
             px={{ base: 4, md: 8 }}
           >
-            {products.length > 0 ? (
-              products.map((product) => (
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
                 <ProductCard key={product.productID} product={product} />
               ))
             ) : (
